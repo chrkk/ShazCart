@@ -112,7 +112,6 @@ class DashboardModel(private val app: CustomApp) {
     }
     
     fun getUnreadRemindersCount(): Int {
-        // Mocking real notification count (would query DB normally)
-        return 3
+        return app.getUnreadReminderCount()
     }
 }
