@@ -60,6 +60,10 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             findViewById<TextView>(R.id.textviewHousematesTitle).visibility = View.GONE
             findViewById<RecyclerView>(R.id.recyclerviewHousemates).visibility = View.GONE
 
+            // Hide split overview and show personal summary
+            findViewById<View>(R.id.cardSplitOverview).visibility = View.GONE
+            findViewById<View>(R.id.personalSummaryCard).visibility = View.VISIBLE
+
             // Repurpose the housemate button into a Budget Limit setter
             buttonAddHousemate.text = "Set Budget Limit"
             buttonAddHousemate.setBackgroundColor(ContextCompat.getColor(this, R.color.dashboard_accent))
@@ -74,6 +78,9 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             buttonAddHousemate.text = "＋ Add Housemate"
             buttonAddHousemate.setBackgroundColor(ContextCompat.getColor(this, R.color.dashboard_success))
             findViewById<TextView>(R.id.textviewSharedListTitle).text = "Shared Grocery List"
+            // Show split overview and hide personal summary
+            findViewById<View>(R.id.cardSplitOverview).visibility = View.VISIBLE
+            findViewById<View>(R.id.personalSummaryCard).visibility = View.GONE
         }
     }
 
