@@ -13,7 +13,6 @@ import com.shaz.shazcart.R
 import com.shaz.shazcart.app.CustomApp
 import com.shaz.shazcart.data.GroceryItem
 import com.shaz.shazcart.data.Housemate
-import com.shaz.shazcart.helper.DashboardRecyclerAdapter
 import com.shaz.shazcart.screens.welcome.WelcomeActivity
 
 class DashboardActivity : AppCompatActivity(), DashboardContract.View {
