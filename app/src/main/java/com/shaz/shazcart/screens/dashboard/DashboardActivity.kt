@@ -114,7 +114,8 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         val user = (application as CustomApp).getUser()
 
         findViewById<Button>(R.id.buttonAddHousemate).setOnClickListener {
-            if (user.mode == "Solo") {
+            val currentUser = (application as CustomApp).getUser()
+            if (currentUser.mode == "Solo") {
                 showSetBudgetDialog()
             } else {
                 showAddHousemateDialog()
