@@ -101,7 +101,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             if (user.mode == "Solo") {
                 showSetBudgetDialog()
             } else {
-                presenter.addHousemate()
+                showAddHousemateDialog()
             }
         }
 
@@ -139,6 +139,27 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             .setPositiveButton("Save") { _, _ ->
                 val amount = input.text.toString().toDoubleOrNull() ?: 0.0
                 presenter.updateBudget(amount)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showAddHousemateDialog() {
+        val input = EditText(this).apply {
+            hint = "Housemate name"
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Add Housemate")
+            .setMessage("Enter the housemate's name.")
+            .setView(input)
+            .setPositiveButton("Save") { _, _ ->
+                val name = input.text.toString().trim()
+                if (name.isEmpty()) {
+                    showMessage("Please enter a housemate name.")
+                    return@setPositiveButton
+                }
+                presenter.addHousemate(name)
             }
             .setNegativeButton("Cancel", null)
             .show()
