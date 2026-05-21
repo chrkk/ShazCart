@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.core.content.ContextCompat
 import com.shaz.shazcart.R
 import com.shaz.shazcart.app.CustomApp
 import com.shaz.shazcart.data.GroceryItem
@@ -61,7 +62,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
             // Repurpose the housemate button into a Budget Limit setter
             buttonAddHousemate.text = "Set Budget Limit"
-            buttonAddHousemate.setBackgroundColor(android.graphics.Color.parseColor("#3B82F6")) // Blue
+            buttonAddHousemate.setBackgroundColor(ContextCompat.getColor(this, R.color.dashboard_accent))
 
             // Rename Shared Grocery List to Personal
             findViewById<TextView>(R.id.textviewSharedListTitle).text = "Personal Grocery List"
@@ -202,14 +203,16 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                     append("\nAlready paid: ₱${String.format("%.2f", housemate.settlementPaid)}")
                 }
             }
-            setTextColor(android.graphics.Color.parseColor("#374151"))
+            setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_text_muted))
         }
 
         val editButtonLabel = if (housemate.settlementPaid > 0.0) "Edit payment" else "Record payment"
         val editButton = Button(this).apply {
             text = editButtonLabel
             setTextColor(android.graphics.Color.WHITE)
-            backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#059669"))
+            backgroundTintList = android.content.res.ColorStateList.valueOf(
+                ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_success)
+            )
             setOnClickListener {
                 showEditHousematePaymentDialog(
                     position = position,
@@ -223,7 +226,9 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         val settleButton = Button(this).apply {
             text = "Settle full balance"
             setTextColor(android.graphics.Color.WHITE)
-            backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#3B82F6"))
+            backgroundTintList = android.content.res.ColorStateList.valueOf(
+                ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_accent)
+            )
             setOnClickListener {
                 presenter.settleHousemate(position)
             }
@@ -232,7 +237,9 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         val clearButton = Button(this).apply {
             text = "Clear payment"
             setTextColor(android.graphics.Color.WHITE)
-            backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#6B7280"))
+            backgroundTintList = android.content.res.ColorStateList.valueOf(
+                ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_text_muted)
+            )
             visibility = if (housemate.settlementPaid > 0.0) View.VISIBLE else View.GONE
             setOnClickListener {
                 presenter.clearHousematePayment(position)
@@ -242,7 +249,9 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         val deleteButton = Button(this).apply {
             text = "Delete housemate"
             setTextColor(android.graphics.Color.WHITE)
-            backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#DC2626"))
+            backgroundTintList = android.content.res.ColorStateList.valueOf(
+                ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_danger)
+            )
             setOnClickListener {
                 showRemoveHousemateDialog(position)
             }
@@ -308,7 +317,10 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                 isAllCaps = false
                 setTextColor(android.graphics.Color.WHITE)
                 backgroundTintList = android.content.res.ColorStateList.valueOf(
-                    android.graphics.Color.parseColor(if (entry.isPayer) "#DC2626" else "#059669")
+                    ContextCompat.getColor(
+                        this@DashboardActivity,
+                        if (entry.isPayer) R.color.dashboard_danger else R.color.dashboard_success
+                    )
                 )
                 setOnClickListener {
                     val housemate = housematesAdapter.getItem(entry.position)
@@ -322,20 +334,20 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         val header = TextView(this).apply {
             text = "Tap a name to open record, edit, settle, or clear actions."
-            setTextColor(android.graphics.Color.parseColor("#6B7280"))
+            setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_text_muted))
         }
         container.addView(header)
 
         if (settlementPayers.isEmpty() && settlementReceivers.isEmpty()) {
             container.addView(TextView(this).apply {
                 text = "Everyone is settled."
-                setTextColor(android.graphics.Color.parseColor("#111827"))
+                setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_text))
             })
         } else {
             if (settlementPayers.isNotEmpty()) {
                 container.addView(TextView(this).apply {
                     text = "Needs to pay"
-                    setTextColor(android.graphics.Color.parseColor("#DC2626"))
+                    setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_danger))
                 })
                 settlementPayers.forEach { addEntryButton(it) }
             }
@@ -343,7 +355,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             if (settlementReceivers.isNotEmpty()) {
                 container.addView(TextView(this).apply {
                     text = "Should receive"
-                    setTextColor(android.graphics.Color.parseColor("#059669"))
+                    setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_success))
                     setPadding(0, 16, 0, 0)
                 })
                 settlementReceivers.forEach { addEntryButton(it) }
