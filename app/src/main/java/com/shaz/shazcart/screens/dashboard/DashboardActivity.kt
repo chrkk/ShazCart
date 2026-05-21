@@ -120,6 +120,11 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             val intent = Intent(this, com.shaz.shazcart.screens.profile.ProfileActivity::class.java)
             startActivity(intent)
         }
+
+        findViewById<TextView>(R.id.textviewNotification).setOnClickListener {
+            val intent = Intent(this, com.shaz.shazcart.screens.reminder.ReminderActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun showSetBudgetDialog() {
@@ -191,6 +196,15 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             // Passive warning
             Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             textviewNotification.text = "⚠️ Near Budget"
+        }
+    }
+
+    override fun updateNotificationBadge(count: Int) {
+        val textviewNotification = findViewById<TextView>(R.id.textviewNotification)
+        if (count > 0) {
+            textviewNotification.text = "🔔 $count"
+        } else {
+            textviewNotification.text = "🔔"
         }
     }
 }
