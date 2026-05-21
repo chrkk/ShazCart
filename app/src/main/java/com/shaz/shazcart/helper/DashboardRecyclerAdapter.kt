@@ -13,7 +13,7 @@ class DashboardRecyclerAdapter<T>(
     private val getSecondary: (T) -> String,
     private val onClick: (T) -> Unit,
     private val onLongClick: (T, Int) -> Unit
-) : RecyclerView.Adapter<DashboardRecyclerAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<DashboardRecyclerAdapter<T>.ViewHolder>() {
 
     private val itemList = mutableListOf<T>()
 
