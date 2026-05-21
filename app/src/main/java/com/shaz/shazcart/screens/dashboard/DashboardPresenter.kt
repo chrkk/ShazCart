@@ -13,7 +13,7 @@ class DashboardPresenter(
     }
 
     override fun addHousemate() {
-        model.addHousemate(Housemate("New Housemate", "Owes ₱0 ⚠️"))
+        model.addHousemate(Housemate("New Housemate", 0.0, "Owes ₱0 ⚠️"))
         view.showMessage("Housemate has been added.")
         refreshView()
     }
