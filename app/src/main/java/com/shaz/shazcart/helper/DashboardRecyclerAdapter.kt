@@ -23,6 +23,10 @@ class DashboardRecyclerAdapter<T>(
         notifyDataSetChanged()
     }
 
+    fun getItem(position: Int): T? {
+        return itemList.getOrNull(position)
+    }
+
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val icon: ImageView = view.findViewById(R.id.imageview_row_icon)
         val primaryText: TextView = view.findViewById(R.id.textview_row_primary)

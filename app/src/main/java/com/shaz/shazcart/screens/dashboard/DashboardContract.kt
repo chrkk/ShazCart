@@ -17,6 +17,9 @@ interface DashboardContract {
         fun loadDashboard()
         fun addHousemate(name: String)
         fun removeHousemate(position: Int)
+        fun recordHousematePayment(position: Int, amount: Double)
+        fun settleHousemate(position: Int)
+        fun clearHousematePayment(position: Int)
         fun addGroceryItem(itemName: String, assignedTo: String, price: String)
         fun removeGroceryItem(position: Int)
         fun updateBudget(amount: Double) // NEW

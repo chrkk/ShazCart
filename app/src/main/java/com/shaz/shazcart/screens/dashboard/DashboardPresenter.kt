@@ -24,6 +24,24 @@ class DashboardPresenter(
         refreshView()
     }
 
+    override fun recordHousematePayment(position: Int, amount: Double) {
+        val updated = model.recordHousematePayment(position, amount)
+        view.showMessage("${updated.name} payment recorded.")
+        refreshView()
+    }
+
+    override fun settleHousemate(position: Int) {
+        val updated = model.settleHousemate(position)
+        view.showMessage("${updated.name} marked as settled.")
+        refreshView()
+    }
+
+    override fun clearHousematePayment(position: Int) {
+        val updated = model.clearHousematePayment(position)
+        view.showMessage("${updated.name} payment cleared.")
+        refreshView()
+    }
+
     override fun addGroceryItem(itemName: String, assignedTo: String, price: String) {
         model.addGroceryItem(GroceryItem(itemName, assignedTo, price))
         view.showMessage("$itemName has been added.")

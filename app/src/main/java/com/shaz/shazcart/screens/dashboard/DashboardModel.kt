@@ -55,14 +55,14 @@ class DashboardModel(private val app: CustomApp) {
         // 2. Compare what they should pay (splitAmount) vs what they already paid
         for (housemate in housemates) {
             val paid = paidAmounts[housemate.name] ?: 0.0
-            val balance = splitAmount - paid
+            val balance = splitAmount - paid - housemate.settlementPaid
 
             if (balance > 0.01) {
                 housemate.amountOwed = balance
                 housemate.status = "Owes ₱${String.format("%.2f", balance)} 🔴"
             } else if (balance < -0.01) {
                 housemate.amountOwed = 0.0
-                housemate.status = "Gets back ₱${String.format("%.2f", -balance)} 🟢"
+                housemate.status = "Overpaid ₱${String.format("%.2f", -balance)} 🟢"
             } else {
                 housemate.amountOwed = 0.0
                 housemate.status = "Settled ✅"
@@ -83,6 +83,28 @@ class DashboardModel(private val app: CustomApp) {
 
     fun removeHousemate(position: Int): Housemate {
         return housemates.removeAt(position)
+    }
+
+    fun recordHousematePayment(position: Int, amount: Double): Housemate {
+        housemates[position].settlementPaid += amount
+        updateExpenseSplit()
+        return housemates[position]
+    }
+
+    fun settleHousemate(position: Int): Housemate {
+        updateExpenseSplit()
+        val housemate = housemates[position]
+        if (housemate.amountOwed > 0.0) {
+            housemate.settlementPaid += housemate.amountOwed
+        }
+        updateExpenseSplit()
+        return housemate
+    }
+
+    fun clearHousematePayment(position: Int): Housemate {
+        housemates[position].settlementPaid = 0.0
+        updateExpenseSplit()
+        return housemates[position]
     }
 
     fun addGroceryItem(item: GroceryItem) {
