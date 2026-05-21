@@ -1,13 +1,12 @@
 package com.shaz.shazcart.screens.reminder
 
-import android.app.Dialog
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.shaz.shazcart.R
@@ -50,17 +49,12 @@ class ReminderActivity : AppCompatActivity(), ReminderContract.View {
 
         // Reusing the robust Recycler Adapter we built for the Dashboard!
         reminderAdapter = DashboardRecyclerAdapter(
-            getPrimary = { reminder -> 
-                if (reminder.isRead) "${reminder.title}" else "${reminder.title}"
+            getPrimary = { reminder ->
+                if (reminder.isRead) reminder.title else "${reminder.title} • new"
             },
             getSecondary = { reminder -> reminder.description },
-            onClick = { reminder -> 
-                val position = reminderAdapterPosition(reminder)
-                if (position >= 0 && !reminder.isRead) {
-                    presenter.markAsRead(position)
-                } else {
-                    Toast.makeText(this, reminder.description, Toast.LENGTH_SHORT).show()
-                }
+            onClick = { _, position ->
+                presenter.markAsRead(position)
             },
             onLongClick = { _, position ->
                 showReminderActions(position)
@@ -68,25 +62,6 @@ class ReminderActivity : AppCompatActivity(), ReminderContract.View {
         )
 
         recyclerView.adapter = reminderAdapter
-    }
-
-    private fun reminderAdapterPosition(reminder: Reminder): Int {
-        return reminderAdapterPositionInternal(reminder)
-    }
-
-    private fun reminderAdapterPositionInternal(reminder: Reminder): Int {
-        return reminderAdapterPositionFromList(reminder)
-    }
-
-    private fun reminderAdapterPositionFromList(reminder: Reminder): Int {
-        return (findViewById<RecyclerView>(R.id.recyclerviewReminders).adapter as? DashboardRecyclerAdapter<Reminder>)
-            ?.let { adapter ->
-                val current = (0 until adapter.itemCount).firstOrNull { index ->
-                    val text = reminder.title
-                    index >= 0 && text.isNotBlank()
-                }
-                current ?: -1
-            } ?: -1
     }
 
     private fun showReminderActions(position: Int) {
@@ -104,6 +79,7 @@ class ReminderActivity : AppCompatActivity(), ReminderContract.View {
 
     override fun displayReminders(reminders: List<Reminder>) {
         reminderAdapter.submitList(reminders)
+        findViewById<TextView>(R.id.textviewEmptyState).visibility = if (reminders.isEmpty()) View.VISIBLE else View.GONE
     }
 
     override fun updateUnreadCount(count: Int) {

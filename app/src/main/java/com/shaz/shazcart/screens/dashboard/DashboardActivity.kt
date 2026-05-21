@@ -71,7 +71,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         housematesAdapter = DashboardRecyclerAdapter(
             getPrimary = { housemate -> housemate.name },
             getSecondary = { housemate -> housemate.status },
-            onClick = { housemate ->
+            onClick = { housemate, _ ->
                 Toast.makeText(this, "${housemate.name}: ${housemate.status}", Toast.LENGTH_SHORT).show()
             },
             onLongClick = { _, position ->
@@ -82,7 +82,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         groceryAdapter = DashboardRecyclerAdapter(
             getPrimary = { item -> item.itemName },
             getSecondary = { item -> "${item.assignedTo} — ${item.price}" },
-            onClick = { item ->
+            onClick = { item, _ ->
                 Toast.makeText(this, "${item.itemName} bought by ${item.assignedTo} for ${item.price}", Toast.LENGTH_SHORT).show()
             },
             onLongClick = { _, position ->
