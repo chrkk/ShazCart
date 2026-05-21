@@ -10,6 +10,7 @@ interface DashboardContract {
         fun showSharedList(items: List<GroceryItem>)
         fun showMessage(message: String)
         fun showBudgetWarning(message: String, isCritical: Boolean) // NEW
+        fun updateNotificationBadge(count: Int) // NEW
     }
 
     interface Presenter {

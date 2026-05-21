@@ -48,6 +48,9 @@ class DashboardPresenter(
         view.showHousematesStatus(model.getHousematesStatus().toList())
         view.showSharedList(model.getSharedList().toList())
 
+        // Reminders Badge evaluation
+        view.updateNotificationBadge(model.getUnreadRemindersCount())
+
         // Budget evaluation
         if (model.getMode() == "Solo") {
             val budget = model.getBudgetLimit()
