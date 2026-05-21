@@ -92,4 +92,18 @@ class DashboardModel(private val app: CustomApp) {
     fun removeGroceryItem(position: Int): GroceryItem {
         return groceryList.removeAt(position)
     }
+
+    fun getBudgetLimit(): Double {
+        return app.getUser().budgetLimit
+    }
+
+    fun setBudgetLimit(limit: Double) {
+        val user = app.getUser()
+        user.budgetLimit = limit
+        app.setUser(user)
+    }
+
+    fun getMode(): String {
+        return app.getUser().mode
+    }
 }
