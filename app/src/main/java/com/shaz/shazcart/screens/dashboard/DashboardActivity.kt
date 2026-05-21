@@ -243,7 +243,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             backgroundTintList = android.content.res.ColorStateList.valueOf(
                 ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_text_muted)
             )
-            visibility = if (housemate.settlementPaid > 0.0) View.VISIBLE else View.GONE
+            visibility = if (housemate.settlementPaid > 0.0 || housemate.settlementReceived > 0.0) View.VISIBLE else View.GONE
             setOnClickListener {
                 presenter.clearHousematePayment(position)
             }
