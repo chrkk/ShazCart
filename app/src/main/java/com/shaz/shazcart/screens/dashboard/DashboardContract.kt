@@ -6,11 +6,16 @@ import com.shaz.shazcart.data.Housemate
 interface DashboardContract {
     interface View {
         fun showSummary(totalItems: Int, pendingItems: Int, totalSpent: Double)
-        fun showHousematesStatus(housemates: MutableList<Housemate>)
-        fun showSharedList(items: MutableList<GroceryItem>)
+        fun showHousematesStatus(housemates: List<Housemate>)
+        fun showSharedList(items: List<GroceryItem>)
+        fun showMessage(message: String)
     }
 
     interface Presenter {
         fun loadDashboard()
+        fun addHousemate()
+        fun removeHousemate(position: Int)
+        fun addGroceryItem()
+        fun removeGroceryItem(position: Int)
     }
 }
