@@ -136,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:text="Sign In"
                 app:cornerRadius="12dp"
-                android:strokeWidth="1dp"
+                app:strokeWidth="1dp"
                 app:strokeColor="@color/dashboard_border"
                 android:backgroundTint="@android:color/transparent"
                 android:textColor="@color/dashboard_primary" />
