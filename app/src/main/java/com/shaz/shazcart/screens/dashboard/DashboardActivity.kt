@@ -77,9 +77,15 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         housematesAdapter = DashboardRecyclerAdapter(
             getPrimary = { housemate -> housemate.name },
-            getSecondary = { housemate -> housemate.status },
-            onClick = { housemate, _ ->
-                Toast.makeText(this, "${housemate.name}: ${housemate.status}", Toast.LENGTH_SHORT).show()
+            getSecondary = { housemate ->
+                if (housemate.settlementPaid > 0.0) {
+                    "${housemate.status} · Paid ₱${String.format("%.2f", housemate.settlementPaid)}"
+                } else {
+                    housemate.status
+                }
+            },
+            onClick = { _, position ->
+                showHousemateActionsDialog(position)
             },
             onLongClick = { _, position ->
                 showRemoveHousemateDialog(position)
@@ -167,6 +173,57 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                     return@setPositiveButton
                 }
                 presenter.addHousemate(name)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showHousemateActionsDialog(position: Int) {
+        val housemate = housematesAdapter.getItem(position) ?: return
+        val summary = buildString {
+            append(housemate.status.ifBlank { "No split yet" })
+            if (housemate.settlementPaid > 0.0) {
+                append("\nAlready paid: ₱${String.format("%.2f", housemate.settlementPaid)}")
+            }
+        }
+
+        val actions = mutableListOf("Record payment", "Settle full balance")
+        if (housemate.settlementPaid > 0.0) {
+            actions.add("Clear payment")
+        }
+        actions.add("Delete housemate")
+
+        AlertDialog.Builder(this)
+            .setTitle(housemate.name)
+            .setMessage(summary)
+            .setItems(actions.toTypedArray()) { _, which ->
+                when (actions[which]) {
+                    "Record payment" -> showRecordHousematePaymentDialog(position, housemate.name)
+                    "Settle full balance" -> presenter.settleHousemate(position)
+                    "Clear payment" -> presenter.clearHousematePayment(position)
+                    "Delete housemate" -> showRemoveHousemateDialog(position)
+                }
+            }
+            .show()
+    }
+
+    private fun showRecordHousematePaymentDialog(position: Int, housemateName: String) {
+        val input = EditText(this).apply {
+            hint = "Amount already paid"
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Record payment")
+            .setMessage("How much has $housemateName already paid?")
+            .setView(input)
+            .setPositiveButton("Save") { _, _ ->
+                val amount = input.text.toString().toDoubleOrNull()
+                if (amount == null || amount <= 0.0) {
+                    showMessage("Enter a valid amount.")
+                    return@setPositiveButton
+                }
+                presenter.recordHousematePayment(position, amount)
             }
             .setNegativeButton("Cancel", null)
             .show()
