@@ -1,15 +1,96 @@
+# ==========================
+# Android
+# ==========================
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+*.ap_
+*.dex
+*.class
+/build/
+/app/build/
+/captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# ==========================
+# Gradle
+# ==========================
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
 local.properties
+
+# ==========================
+# IntelliJ / Android Studio
+# ==========================
+/.idea/
+.idea/
+*.iws
+out/
+# Keep these if you want shared run configs:
+# !.idea/runConfigurations/
+
+# ==========================
+# Kotlin
+# ==========================
+*.kotlin_module
+
+# ==========================
+# Local Config / Secrets
+# ==========================
+local.properties
+keystore.properties
+*.jks
+*.keystore
+google-services.json
+GoogleService-Info.plist
+
+# ==========================
+# OS Generated
+# ==========================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ==========================
+# Logs & Temp Files
+# ==========================
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# ==========================
+# ProGuard
+# ==========================
+proguard/
+# Keep your actual rules file:
+# !app/proguard-rules.pro
+
+# ==========================
+# NDK / Native
+# ==========================
+obj/
+*.so
+*.o
+*.a
