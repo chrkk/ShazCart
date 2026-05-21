@@ -6,19 +6,13 @@ import com.shaz.shazcart.data.Housemate
 
 class DashboardModel(private val app: CustomApp) {
 
-    private val housemates = mutableListOf(
-        Housemate("Marco", 0.0, ""),
-        Housemate("Lea", 0.0, ""),
-        Housemate("Juan", 0.0, ""),
-        Housemate("Ana", 0.0, "")
-    )
+    private val housemates = mutableListOf<Housemate>()
 
-    private val groceryList = mutableListOf(
-        GroceryItem("Rice (5kg)", "Marco", "₱280"),
-        GroceryItem("Cooking Oil", "Lea", "₱95"),
-        GroceryItem("Eggs", "Juan", "₱180"),
-        GroceryItem("Instant Noodles", "Marco", "₱120")
-    )
+    private val groceryList = mutableListOf<GroceryItem>()
+
+    private fun parsePrice(price: String): Double {
+        return price.replace("₱", "").replace(",", "").trim().toDoubleOrNull() ?: 0.0
+    }
 
     fun getSummary(): Triple<Int, Int, Double> {
         val totalItems = groceryList.size
@@ -26,9 +20,7 @@ class DashboardModel(private val app: CustomApp) {
 
         var totalSpent = 0.0
         for (item in groceryList) {
-            val priceStr = item.price.replace("₱", "").replace(",", "").trim()
-            val price = priceStr.toDoubleOrNull() ?: 0.0
-            totalSpent += price
+            totalSpent += parsePrice(item.price)
         }
         return Triple(totalItems, pendingItems, totalSpent)
     }
@@ -46,16 +38,15 @@ class DashboardModel(private val app: CustomApp) {
         }
 
         for (item in groceryList) {
-            val priceStr = item.price.replace("₱", "").replace(",", "").trim()
-            val price = priceStr.toDoubleOrNull() ?: 0.0
+            val price = parsePrice(item.price)
             val currentPaid = paidAmounts[item.assignedTo] ?: 0.0
             paidAmounts[item.assignedTo] = currentPaid + price
         }
 
-        // 2. Compare what they should pay (splitAmount) vs what they already paid
+        // 2. Compare what they should pay (splitAmount) vs what they already paid or received
         for (housemate in housemates) {
             val paid = paidAmounts[housemate.name] ?: 0.0
-            val balance = splitAmount - paid - housemate.settlementPaid
+            val balance = splitAmount - paid - housemate.settlementPaid + housemate.settlementReceived
             housemate.netBalance = balance
 
             if (balance > 0.01) {
@@ -153,8 +144,10 @@ class DashboardModel(private val app: CustomApp) {
     fun settleHousemate(position: Int): Housemate {
         updateExpenseSplit()
         val housemate = housemates[position]
-        if (housemate.amountOwed > 0.0) {
+        if (housemate.netBalance > 0.01) {
             housemate.settlementPaid += housemate.amountOwed
+        } else if (housemate.netBalance < -0.01) {
+            housemate.settlementReceived += kotlin.math.abs(housemate.netBalance)
         }
         updateExpenseSplit()
         return housemate
@@ -162,6 +155,7 @@ class DashboardModel(private val app: CustomApp) {
 
     fun clearHousematePayment(position: Int): Housemate {
         housemates[position].settlementPaid = 0.0
+        housemates[position].settlementReceived = 0.0
         updateExpenseSplit()
         return housemates[position]
     }

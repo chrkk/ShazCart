@@ -202,6 +202,9 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                 if (housemate.settlementPaid > 0.0) {
                     append("\nAlready paid: ₱${String.format("%.2f", housemate.settlementPaid)}")
                 }
+                if (housemate.settlementReceived > 0.0) {
+                    append("\nAlready received: ₱${String.format("%.2f", housemate.settlementReceived)}")
+                }
             }
             setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_text_muted))
         }
