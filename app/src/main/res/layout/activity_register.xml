@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/dashboard_bg"
     android:fillViewport="true">
 
     <LinearLayout
@@ -16,7 +17,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:background="@drawable/bg_gradient_green"
+            android:background="#059669"
             android:padding="16dp">
 
             <TextView
@@ -31,78 +32,79 @@
         </RelativeLayout>
 
         <!-- Form Card -->
-        <LinearLayout
-            android:id="@+id/layoutFormCard"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp"
-            android:layout_marginTop="-40dp"
-            android:background="@drawable/bg_card"
-            android:elevation="6dp">
+            android:layout_margin="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp">
 
-            <!-- Name -->
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Full Name"
-                android:textColor="#374151"
-                android:textStyle="bold"
-                android:layout_marginTop="16dp"/>
+                android:orientation="vertical"
+                android:padding="20dp">
 
-            <EditText
-                android:id="@+id/edittextName"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="Your name"
-                android:background="@drawable/bg_input"
-                android:padding="12dp"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Full name">
 
-            <!-- Email -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Email Address"
-                android:textColor="#374151"
-                android:textStyle="bold"
-                android:layout_marginTop="16dp"/>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edittextName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
-            <EditText
-                android:id="@+id/edittextEmail"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="you@example.com"
-                android:inputType="textEmailAddress"
-                android:background="@drawable/bg_input"
-                android:padding="12dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Password -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Password"
-                android:textColor="#374151"
-                android:textStyle="bold"
-                android:layout_marginTop="16dp"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Email address"
+                    android:layout_marginTop="12dp">
 
-            <EditText
-                android:id="@+id/edittextPassword"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="Enter password"
-                android:inputType="textPassword"
-                android:background="@drawable/bg_input"
-                android:padding="12dp"/>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edittextEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress" />
 
-            <!-- Register Button -->
-            <Button
-                android:id="@+id/buttonRegister"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="Register"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#059669"
-                android:layout_marginTop="24dp"/>
-        </LinearLayout>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Password"
+                    android:layout_marginTop="12dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edittextPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="You can choose Solo or Group mode after signing in."
+                    android:textColor="@color/dashboard_text"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:text="Register"
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="@color/dashboard_accent"
+                    android:textColor="@android:color/white" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 </ScrollView>

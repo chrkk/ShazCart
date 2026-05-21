@@ -11,7 +11,7 @@ import com.shaz.shazcart.R
 class DashboardRecyclerAdapter<T>(
     private val getPrimary: (T) -> String,
     private val getSecondary: (T) -> String,
-    private val onClick: (T) -> Unit,
+    private val onClick: (T, Int) -> Unit,
     private val onLongClick: (T, Int) -> Unit
 ) : RecyclerView.Adapter<DashboardRecyclerAdapter<T>.ViewHolder>() {
 
@@ -21,6 +21,12 @@ class DashboardRecyclerAdapter<T>(
         itemList.clear()
         itemList.addAll(list)
         notifyDataSetChanged()
+    }
+
+    fun getAllItems(): List<T> = itemList.toList()
+
+    fun getItem(position: Int): T? {
+        return itemList.getOrNull(position)
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -42,7 +48,7 @@ class DashboardRecyclerAdapter<T>(
         holder.secondaryText.text = getSecondary(item)
 
         holder.itemView.setOnClickListener {
-            onClick(item)
+            onClick(item, position)
         }
 
         holder.itemView.setOnLongClickListener {

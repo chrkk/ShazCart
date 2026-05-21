@@ -13,7 +13,7 @@ class RegisterActivity : AppCompatActivity(), RegisterContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register) // must match your XML filename
+        setContentView(R.layout.activity_register)
 
         presenter = RegisterPresenter(this, RegisterModel(application as CustomApp))
 
@@ -36,8 +36,8 @@ class RegisterActivity : AppCompatActivity(), RegisterContract.View {
     }
 
     override fun showSuccessMessage() {
-        toast("Registration successful")
-        finish() // go back to login
+        toast("Account created. Choose Solo or Group when you sign in.")
+        finish()
     }
 
     override fun showErrorMessage() {

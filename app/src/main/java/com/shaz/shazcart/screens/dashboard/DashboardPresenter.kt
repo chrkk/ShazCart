@@ -12,9 +12,9 @@ class DashboardPresenter(
         refreshView()
     }
 
-    override fun addHousemate() {
-        model.addHousemate(Housemate("New Housemate", "Owes ₱0 ⚠️"))
-        view.showMessage("Housemate has been added.")
+    override fun addHousemate(name: String) {
+        model.addHousemate(Housemate(name, 0.0, ""))
+        view.showMessage("$name has been added.")
         refreshView()
     }
 
@@ -24,9 +24,33 @@ class DashboardPresenter(
         refreshView()
     }
 
-    override fun addGroceryItem() {
-        model.addGroceryItem(GroceryItem("New Item", "Unassigned", "₱0"))
-        view.showMessage("Grocery item has been added.")
+    override fun recordHousematePayment(position: Int, amount: Double) {
+        val updated = model.recordHousematePayment(position, amount)
+        view.showMessage("${updated.name} payment recorded.")
+        refreshView()
+    }
+
+    override fun setHousematePayment(position: Int, amount: Double) {
+        val updated = model.setHousematePayment(position, amount)
+        view.showMessage("${updated.name} payment updated.")
+        refreshView()
+    }
+
+    override fun settleHousemate(position: Int) {
+        val updated = model.settleHousemate(position)
+        view.showMessage("${updated.name} marked as settled.")
+        refreshView()
+    }
+
+    override fun clearHousematePayment(position: Int) {
+        val updated = model.clearHousematePayment(position)
+        view.showMessage("${updated.name} payment cleared.")
+        refreshView()
+    }
+
+    override fun addGroceryItem(itemName: String, assignedTo: String, price: String) {
+        model.addGroceryItem(GroceryItem(itemName, assignedTo, price))
+        view.showMessage("$itemName has been added.")
         refreshView()
     }
 
@@ -36,10 +60,41 @@ class DashboardPresenter(
         refreshView()
     }
 
+    override fun updateBudget(amount: Double) {
+        model.setBudgetLimit(amount)
+        view.showMessage("Budget limit updated to ₱$amount")
+        refreshView()
+    }
+
+    override fun recordSettlement(from: String, to: String, amount: Double) {
+        model.addSettlement(from, to, amount)
+        view.showMessage("Recorded transfer ₱$amount from $from to $to")
+        refreshView()
+    }
+
     private fun refreshView() {
         val (totalItems, pendingItems, totalSpent) = model.getSummary()
         view.showSummary(totalItems, pendingItems, totalSpent)
+        val (needsToPay, shouldReceive) = model.getSettlementSummary()
+        view.showSettlementSummary(needsToPay, shouldReceive)
+        val (payers, receivers) = model.getSettlementEntries()
+        view.showSettlementEntries(payers, receivers)
         view.showHousematesStatus(model.getHousematesStatus().toList())
         view.showSharedList(model.getSharedList().toList())
+
+        // Reminders Badge evaluation
+        view.updateNotificationBadge(model.getUnreadRemindersCount())
+
+        // Budget evaluation
+        if (model.getMode() == "Solo") {
+            val budget = model.getBudgetLimit()
+            if (budget > 0) {
+                if (totalSpent > budget) {
+                    view.showBudgetWarning("CRITICAL: You are over your budget of ₱$budget!", true)
+                } else if (totalSpent >= budget * 0.8) {
+                    view.showBudgetWarning("Warning: You are close to your budget of ₱$budget.", false)
+                }
+            }
+        }
     }
 }

@@ -11,6 +11,6 @@ interface LoginContract {
     }
 
     interface Presenter {
-        fun validateCredentials(username: String, password: String)
+        fun validateCredentials(email: String, password: String, mode: String)
     }
 }

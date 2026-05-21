@@ -2,13 +2,18 @@ package com.shaz.shazcart.screens.dashboard
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
+import android.widget.EditText
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.core.content.ContextCompat
 import com.shaz.shazcart.R
 import com.shaz.shazcart.app.CustomApp
 import com.shaz.shazcart.data.GroceryItem
@@ -21,6 +26,8 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
     private lateinit var presenter: DashboardPresenter
     private lateinit var housematesAdapter: DashboardRecyclerAdapter<Housemate>
     private lateinit var groceryAdapter: DashboardRecyclerAdapter<GroceryItem>
+    private var settlementPayers: List<DashboardContract.SettlementEntry> = emptyList()
+    private var settlementReceivers: List<DashboardContract.SettlementEntry> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,8 +37,53 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         setupRecyclerViews()
         setupButtons()
+        setupModeUI() // Applies Solo or Group logic dynamically
 
         presenter.loadDashboard()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (::presenter.isInitialized) {
+            presenter.loadDashboard()
+        }
+    }
+
+    private fun setupModeUI() {
+        val user = (application as CustomApp).getUser()
+        val textviewGroupMode = findViewById<TextView>(R.id.textviewGroupMode)
+        val buttonAddHousemate = findViewById<Button>(R.id.buttonAddHousemate)
+
+        if (user.mode == "Solo") {
+            // Adjust the header text
+            textviewGroupMode.text = "Solo Mode — Personal Dashboard"
+
+            // Hide housemates section completely
+            findViewById<TextView>(R.id.textviewHousematesTitle).visibility = View.GONE
+            findViewById<RecyclerView>(R.id.recyclerviewHousemates).visibility = View.GONE
+
+            // Hide split overview and show personal summary
+            findViewById<View>(R.id.cardSplitOverview).visibility = View.GONE
+            findViewById<View>(R.id.personalSummaryCard).visibility = View.VISIBLE
+
+            // Repurpose the housemate button into a Budget Limit setter
+            buttonAddHousemate.text = "Set Budget Limit"
+            buttonAddHousemate.setBackgroundColor(ContextCompat.getColor(this, R.color.dashboard_accent))
+
+            // Rename Shared Grocery List to Personal
+            findViewById<TextView>(R.id.textviewSharedListTitle).text = "Personal Grocery List"
+        } else {
+            // Restore Group UI when switching back from Solo
+            textviewGroupMode.text = "Group Mode — Shared Boarding House"
+            findViewById<TextView>(R.id.textviewHousematesTitle).visibility = View.VISIBLE
+            findViewById<RecyclerView>(R.id.recyclerviewHousemates).visibility = View.VISIBLE
+            buttonAddHousemate.text = "＋ Add Housemate"
+            buttonAddHousemate.setBackgroundColor(ContextCompat.getColor(this, R.color.dashboard_success))
+            findViewById<TextView>(R.id.textviewSharedListTitle).text = "Shared Grocery List"
+            // Show split overview and hide personal summary
+            findViewById<View>(R.id.cardSplitOverview).visibility = View.VISIBLE
+            findViewById<View>(R.id.personalSummaryCard).visibility = View.GONE
+        }
     }
 
     private fun setupRecyclerViews() {
@@ -43,9 +95,15 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         housematesAdapter = DashboardRecyclerAdapter(
             getPrimary = { housemate -> housemate.name },
-            getSecondary = { housemate -> housemate.status },
-            onClick = { housemate ->
-                Toast.makeText(this, "${housemate.name}: ${housemate.status}", Toast.LENGTH_SHORT).show()
+            getSecondary = { housemate ->
+                if (housemate.settlementPaid > 0.0) {
+                    "${housemate.status} · Paid ₱${String.format("%.2f", housemate.settlementPaid)}"
+                } else {
+                    housemate.status
+                }
+            },
+            onClick = { _, position ->
+                showHousemateActionsDialog(position)
             },
             onLongClick = { _, position ->
                 showRemoveHousemateDialog(position)
@@ -55,7 +113,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         groceryAdapter = DashboardRecyclerAdapter(
             getPrimary = { item -> item.itemName },
             getSecondary = { item -> "${item.assignedTo} — ${item.price}" },
-            onClick = { item ->
+            onClick = { item, _ ->
                 Toast.makeText(this, "${item.itemName} bought by ${item.assignedTo} for ${item.price}", Toast.LENGTH_SHORT).show()
             },
             onLongClick = { _, position ->
@@ -68,12 +126,19 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
     }
 
     private fun setupButtons() {
+        val user = (application as CustomApp).getUser()
+
         findViewById<Button>(R.id.buttonAddHousemate).setOnClickListener {
-            presenter.addHousemate()
+            val currentUser = (application as CustomApp).getUser()
+            if (currentUser.mode == "Solo") {
+                showSetBudgetDialog()
+            } else {
+                showAddHousemateDialog()
+            }
         }
 
         findViewById<Button>(R.id.buttonAddGrocery).setOnClickListener {
-            presenter.addGroceryItem()
+            showAddGroceryDialog()
         }
 
         findViewById<Button>(R.id.buttonLogout)?.setOnClickListener {
@@ -83,6 +148,424 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             startActivity(intent)
             finish()
         }
+
+        findViewById<Button>(R.id.buttonProfile)?.setOnClickListener {
+            val intent = Intent(this, com.shaz.shazcart.screens.profile.ProfileActivity::class.java)
+            startActivity(intent)
+        }
+
+        findViewById<TextView>(R.id.textviewNotification).setOnClickListener {
+            val intent = Intent(this, com.shaz.shazcart.screens.reminder.ReminderActivity::class.java)
+            startActivity(intent)
+        }
+
+        findViewById<Button>(R.id.buttonManageSplit).setOnClickListener {
+            showSplitActionsDialog()
+        }
+
+        findViewById<Button>(R.id.buttonSwitchMode).setOnClickListener {
+            showModeSwitchDialog()
+        }
+    }
+
+    private fun showModeSwitchDialog() {
+        val container = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(48, 24, 48, 0)
+        }
+
+        val radioGroup = android.widget.RadioGroup(this).apply {
+            orientation = android.widget.RadioGroup.HORIZONTAL
+        }
+
+        val radioGroupBtn = android.widget.RadioButton(this).apply { text = "Group"; id = android.view.View.generateViewId() }
+        val radioSoloBtn = android.widget.RadioButton(this).apply { text = "Solo"; id = android.view.View.generateViewId() }
+        radioGroup.addView(radioGroupBtn)
+        radioGroup.addView(radioSoloBtn)
+
+        // Pre-select current mode
+        val currentMode = (application as CustomApp).getUser().mode
+        if (currentMode == "Solo") radioSoloBtn.isChecked = true else radioGroupBtn.isChecked = true
+
+        container.addView(radioGroup)
+
+        AlertDialog.Builder(this)
+            .setTitle("Select mode")
+            .setMessage("Choose Solo for personal use or Group for shared house management.")
+            .setView(container)
+            .setPositiveButton("Apply") { _, _ ->
+                val selected = if (radioSoloBtn.isChecked) "Solo" else "Group"
+                (application as CustomApp).updateUserMode(selected)
+                setupModeUI()
+                presenter.loadDashboard()
+                showMessage("Mode switched to $selected")
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showRecordSettlementDialog() {
+        val names = housematesAdapter.getAllItems().map { (it as com.shaz.shazcart.data.Housemate).name }
+        if (names.size < 2) {
+            showMessage("Need at least two housemates to record a transfer.")
+            return
+        }
+
+        val container = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(48, 24, 48, 0)
+        }
+
+        val fromInput = AutoCompleteTextView(this).apply {
+            hint = "From (payer)"
+            threshold = 1
+            setAdapter(ArrayAdapter(this@DashboardActivity, android.R.layout.simple_dropdown_item_1line, names))
+        }
+
+        val toInput = AutoCompleteTextView(this).apply {
+            hint = "To (receiver)"
+            threshold = 1
+            setAdapter(ArrayAdapter(this@DashboardActivity, android.R.layout.simple_dropdown_item_1line, names))
+        }
+
+        val amountInput = EditText(this).apply {
+            hint = "Amount"
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        }
+
+        container.addView(fromInput)
+        container.addView(toInput)
+        container.addView(amountInput)
+
+        AlertDialog.Builder(this)
+            .setTitle("Record transfer")
+            .setMessage("Record a payment transfer between housemates.")
+            .setView(container)
+            .setPositiveButton("Save") { _, _ ->
+                val from = fromInput.text.toString().trim()
+                val to = toInput.text.toString().trim()
+                val amount = amountInput.text.toString().toDoubleOrNull() ?: 0.0
+
+                if (from.isEmpty() || to.isEmpty() || amount <= 0.0) {
+                    showMessage("Please provide payer, receiver, and amount.")
+                    return@setPositiveButton
+                }
+                if (from == to) {
+                    showMessage("Payer and receiver must be different.")
+                    return@setPositiveButton
+                }
+
+                (presenter as DashboardContract.Presenter).recordSettlement(from, to, amount)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showSetBudgetDialog() {
+        val input = android.widget.EditText(this)
+        input.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+
+        AlertDialog.Builder(this)
+            .setTitle("Set Budget Limit")
+            .setMessage("Enter your maximum spending limit:")
+            .setView(input)
+            .setPositiveButton("Save") { _, _ ->
+                val amount = input.text.toString().toDoubleOrNull() ?: 0.0
+                presenter.updateBudget(amount)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showAddHousemateDialog() {
+        val input = EditText(this).apply {
+            hint = "Housemate name"
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Add Housemate")
+            .setMessage("Enter the housemate's name.")
+            .setView(input)
+            .setPositiveButton("Save") { _, _ ->
+                val name = input.text.toString().trim()
+                if (name.isEmpty()) {
+                    showMessage("Please enter a housemate name.")
+                    return@setPositiveButton
+                }
+                presenter.addHousemate(name)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showHousemateActionsDialog(position: Int) {
+        val housemate = housematesAdapter.getItem(position) ?: return
+        showHousematePaymentDialog(position, housemate)
+    }
+
+    private fun showHousematePaymentDialog(position: Int, housemate: Housemate) {
+        val container = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(48, 24, 48, 0)
+        }
+
+        val statusText = TextView(this).apply {
+            text = buildString {
+                append(housemate.status.ifBlank { "No split yet" })
+                if (housemate.settlementPaid > 0.0) {
+                    append("\nAlready paid: ₱${String.format("%.2f", housemate.settlementPaid)}")
+                }
+                if (housemate.settlementReceived > 0.0) {
+                    append("\nAlready received: ₱${String.format("%.2f", housemate.settlementReceived)}")
+                }
+            }
+            setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_text_muted))
+        }
+
+        val editButtonLabel = if (housemate.settlementPaid > 0.0) "Edit payment" else "Record payment"
+        val editButton = Button(this).apply {
+            text = editButtonLabel
+            setTextColor(android.graphics.Color.WHITE)
+            backgroundTintList = android.content.res.ColorStateList.valueOf(
+                ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_success)
+            )
+            setOnClickListener {
+                showEditHousematePaymentDialog(
+                    position = position,
+                    housemateName = housemate.name,
+                    currentAmount = housemate.settlementPaid,
+                    isEdit = housemate.settlementPaid > 0.0
+                )
+            }
+        }
+
+        val settleButton = Button(this).apply {
+            text = "Settle full balance"
+            setTextColor(android.graphics.Color.WHITE)
+            backgroundTintList = android.content.res.ColorStateList.valueOf(
+                ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_accent)
+            )
+            setOnClickListener {
+                presenter.settleHousemate(position)
+            }
+        }
+
+        val clearButton = Button(this).apply {
+            text = "Clear payment"
+            setTextColor(android.graphics.Color.WHITE)
+            backgroundTintList = android.content.res.ColorStateList.valueOf(
+                ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_text_muted)
+            )
+            visibility = if (housemate.settlementPaid > 0.0 || housemate.settlementReceived > 0.0) View.VISIBLE else View.GONE
+            setOnClickListener {
+                presenter.clearHousematePayment(position)
+            }
+        }
+
+        val deleteButton = Button(this).apply {
+            text = "Delete housemate"
+            setTextColor(android.graphics.Color.WHITE)
+            backgroundTintList = android.content.res.ColorStateList.valueOf(
+                ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_danger)
+            )
+            setOnClickListener {
+                showRemoveHousemateDialog(position)
+            }
+        }
+
+        container.addView(statusText)
+        container.addView(editButton)
+        container.addView(settleButton)
+        container.addView(clearButton)
+        container.addView(deleteButton)
+
+        AlertDialog.Builder(this)
+            .setTitle(housemate.name)
+            .setView(container)
+            .setPositiveButton("Close", null)
+            .show()
+    }
+
+    private fun showEditHousematePaymentDialog(
+        position: Int,
+        housemateName: String,
+        currentAmount: Double,
+        isEdit: Boolean
+    ) {
+        val input = EditText(this).apply {
+            hint = "Amount already paid"
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+            if (currentAmount > 0.0) {
+                setText(String.format("%.2f", currentAmount))
+                setSelection(text.length)
+            }
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle(if (isEdit) "Edit payment" else "Record payment")
+            .setMessage(if (isEdit) "Update how much $housemateName has already paid." else "How much has $housemateName already paid?")
+            .setView(input)
+            .setPositiveButton("Save") { _, _ ->
+                val amount = input.text.toString().toDoubleOrNull()
+                if (amount == null || amount <= 0.0) {
+                    showMessage("Enter a valid amount.")
+                    return@setPositiveButton
+                }
+                if (isEdit) {
+                    presenter.setHousematePayment(position, amount)
+                } else {
+                    presenter.recordHousematePayment(position, amount)
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showSplitActionsDialog() {
+        val container = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(48, 24, 48, 0)
+        }
+
+        fun addEntryButton(entry: DashboardContract.SettlementEntry) {
+            val button = Button(this).apply {
+                text = "${entry.name} · ₱${String.format("%.2f", entry.amount)}"
+                isAllCaps = false
+                setTextColor(android.graphics.Color.WHITE)
+                backgroundTintList = android.content.res.ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        this@DashboardActivity,
+                        if (entry.isPayer) R.color.dashboard_danger else R.color.dashboard_success
+                    )
+                )
+                setOnClickListener {
+                    val housemate = housematesAdapter.getItem(entry.position)
+                    if (housemate != null) {
+                        showHousematePaymentDialog(entry.position, housemate)
+                    }
+                }
+            }
+            container.addView(button)
+        }
+
+        val header = TextView(this).apply {
+            text = "Tap a name to open record, edit, settle, or clear actions."
+            setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_text_muted))
+        }
+        container.addView(header)
+
+        if (settlementPayers.isEmpty() && settlementReceivers.isEmpty()) {
+            container.addView(TextView(this).apply {
+                text = "Everyone is settled."
+                setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_text))
+            })
+            // Add a quick 'Record transfer' CTA even when settled
+            container.addView(Button(this).apply {
+                text = "Record transfer"
+                setOnClickListener { showRecordSettlementDialog() }
+            })
+        } else {
+            if (settlementPayers.isNotEmpty()) {
+                container.addView(TextView(this).apply {
+                    text = "Needs to pay"
+                    setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_danger))
+                })
+                settlementPayers.forEach { addEntryButton(it) }
+            }
+
+            if (settlementReceivers.isNotEmpty()) {
+                container.addView(TextView(this).apply {
+                    text = "Should receive"
+                    setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_success))
+                    setPadding(0, 16, 0, 0)
+                })
+                settlementReceivers.forEach { addEntryButton(it) }
+            }
+            // Add a Record transfer button below entries
+            container.addView(Button(this).apply {
+                text = "Record transfer"
+                setOnClickListener { showRecordSettlementDialog() }
+            })
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Split actions")
+            .setView(container)
+            .setPositiveButton("Close", null)
+            .show()
+    }
+
+    private fun showAddGroceryDialog() {
+        val user = (application as CustomApp).getUser()
+
+        val container = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(48, 24, 48, 0)
+        }
+
+        val itemNameInput = EditText(this).apply {
+            hint = "Item name"
+        }
+
+        // Build assigned-to input: free text in Solo, autocomplete from housemates in Group
+        val assignedToInputView: View = if (user.mode == "Solo") {
+            EditText(this).apply {
+                hint = "Buyer / assigned to"
+                setText(user.displayName)
+            }
+        } else {
+            val names = housematesAdapter.getAllItems().map { (it as com.shaz.shazcart.data.Housemate).name }
+            if (names.isEmpty()) {
+                showMessage("No housemates yet. Add a housemate first.")
+                return
+            }
+            AutoCompleteTextView(this).apply {
+                hint = "Buyer / assigned to"
+                threshold = 1
+                setAdapter(ArrayAdapter(this@DashboardActivity, android.R.layout.simple_dropdown_item_1line, names))
+            }
+        }
+
+        val priceInput = EditText(this).apply {
+            hint = "Price"
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        }
+
+        container.addView(itemNameInput)
+        container.addView(assignedToInputView)
+        container.addView(priceInput)
+
+        AlertDialog.Builder(this)
+            .setTitle("Add Grocery Item")
+            .setMessage("Assign a buyer before saving the item.")
+            .setView(container)
+            .setPositiveButton("Save") { _, _ ->
+                val itemName = itemNameInput.text.toString().trim()
+                val assignedTo = when (assignedToInputView) {
+                    is EditText -> assignedToInputView.text.toString().trim()
+                    is AutoCompleteTextView -> assignedToInputView.text.toString().trim()
+                    else -> ""
+                }
+                val priceValue = priceInput.text.toString().trim()
+
+                if (itemName.isEmpty() || assignedTo.isEmpty() || priceValue.isEmpty()) {
+                    showMessage("Please fill in item name, buyer, and price.")
+                    return@setPositiveButton
+                }
+
+                if (user.mode != "Solo") {
+                    val validNames = housematesAdapter.getAllItems().map { (it as com.shaz.shazcart.data.Housemate).name }
+                    if (!validNames.contains(assignedTo)) {
+                        showMessage("Please select a buyer from the housemate list.")
+                        return@setPositiveButton
+                    }
+                }
+
+                val normalizedPrice = if (priceValue.startsWith("₱")) priceValue else "₱$priceValue"
+                presenter.addGroceryItem(itemName, assignedTo, normalizedPrice)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun showRemoveHousemateDialog(position: Int) {
@@ -109,6 +592,33 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         findViewById<TextView>(R.id.textviewTotalItems).text = "$totalItems Items"
         findViewById<TextView>(R.id.textviewPendingItems).text = "$pendingItems Pending"
         findViewById<TextView>(R.id.textviewTotalSpent).text = "₱$totalSpent Spent"
+        // If we're in Solo mode, update the personal summary card numbers
+        val user = (application as CustomApp).getUser()
+        if (user.mode == "Solo") {
+            findViewById<TextView>(R.id.textviewBudgetLimit).text = "₱${String.format("%.2f", user.budgetLimit)}"
+            val remaining = user.budgetLimit - totalSpent
+            findViewById<TextView>(R.id.textviewBudgetRemaining).text = "₱${String.format("%.2f", remaining)}"
+        }
+    }
+
+    override fun showSettlementSummary(needsToPay: String, shouldReceive: String) {
+        findViewById<TextView>(R.id.textviewNeedsToPay).text = needsToPay
+        findViewById<TextView>(R.id.textviewShouldReceive).text = shouldReceive
+    }
+
+    override fun showSettlementEntries(
+        payers: List<DashboardContract.SettlementEntry>,
+        receivers: List<DashboardContract.SettlementEntry>
+    ) {
+        settlementPayers = payers
+        settlementReceivers = receivers
+
+        findViewById<Button>(R.id.buttonManageSplit).text =
+            if (payers.isEmpty() && receivers.isEmpty()) {
+                "All settled"
+            } else {
+                "Open split actions (${payers.size + receivers.size})"
+            }
     }
 
     override fun showHousematesStatus(housemates: List<Housemate>) {
@@ -116,10 +626,44 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
     }
 
     override fun showSharedList(items: List<GroceryItem>) {
-        groceryAdapter.submitList(items)
+        // In Solo mode, only show grocery items assigned to the current user.
+        val user = (application as CustomApp).getUser()
+        val listToShow = if (user.mode == "Solo") {
+            items.filter { it.assignedTo == user.displayName }
+        } else {
+            items
+        }
+        groceryAdapter.submitList(listToShow)
     }
 
     override fun showMessage(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showBudgetWarning(message: String, isCritical: Boolean) {
+        val textviewNotification = findViewById<TextView>(R.id.textviewNotification)
+
+        // Show an alert dialog for critical over-budget situations
+        if (isCritical) {
+            AlertDialog.Builder(this)
+                .setTitle("Budget Exceeded!")
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show()
+            textviewNotification.text = "🔴 Over Budget"
+        } else {
+            // Passive warning
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            textviewNotification.text = "⚠️ Near Budget"
+        }
+    }
+
+    override fun updateNotificationBadge(count: Int) {
+        val textviewNotification = findViewById<TextView>(R.id.textviewNotification)
+        if (count > 0) {
+            textviewNotification.text = "🔔 $count"
+        } else {
+            textviewNotification.text = "🔔"
+        }
     }
 }
