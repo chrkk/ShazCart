@@ -94,8 +94,14 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
     }
 
     private fun setupButtons() {
+        val user = (application as CustomApp).getUser()
+
         findViewById<Button>(R.id.buttonAddHousemate).setOnClickListener {
-            presenter.addHousemate()
+            if (user.mode == "Solo") {
+                showSetBudgetDialog()
+            } else {
+                presenter.addHousemate()
+            }
         }
 
         findViewById<Button>(R.id.buttonAddGrocery).setOnClickListener {
@@ -114,6 +120,22 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             val intent = Intent(this, com.shaz.shazcart.screens.profile.ProfileActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private fun showSetBudgetDialog() {
+        val input = android.widget.EditText(this)
+        input.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+
+        AlertDialog.Builder(this)
+            .setTitle("Set Budget Limit")
+            .setMessage("Enter your maximum spending limit:")
+            .setView(input)
+            .setPositiveButton("Save") { _, _ ->
+                val amount = input.text.toString().toDoubleOrNull() ?: 0.0
+                presenter.updateBudget(amount)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun showRemoveHousemateDialog(position: Int) {
@@ -152,5 +174,23 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
     override fun showMessage(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showBudgetWarning(message: String, isCritical: Boolean) {
+        val textviewNotification = findViewById<TextView>(R.id.textviewNotification)
+
+        // Show an alert dialog for critical over-budget situations
+        if (isCritical) {
+            AlertDialog.Builder(this)
+                .setTitle("Budget Exceeded!")
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show()
+            textviewNotification.text = "🔴 Over Budget"
+        } else {
+            // Passive warning
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            textviewNotification.text = "⚠️ Near Budget"
+        }
     }
 }
