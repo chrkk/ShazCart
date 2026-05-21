@@ -2,8 +2,12 @@ package com.shaz.shazcart.screens.profile
 
 import android.os.Bundle
 import android.widget.Button
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.shaz.shazcart.utils.toast
 import com.shaz.shazcart.R
 import com.shaz.shazcart.app.CustomApp
 import com.shaz.shazcart.data.User
@@ -52,12 +56,12 @@ class ProfileActivity : AppCompatActivity(), ProfileContract.View {
             setPadding(48, 24, 48, 0)
         }
 
-        val radioGroup = android.widget.RadioGroup(this).apply {
-            orientation = android.widget.RadioGroup.HORIZONTAL
+        val radioGroup = RadioGroup(this).apply {
+            orientation = RadioGroup.HORIZONTAL
         }
 
-        val radioGroupBtn = android.widget.RadioButton(this).apply { text = "Group"; id = android.view.View.generateViewId() }
-        val radioSoloBtn = android.widget.RadioButton(this).apply { text = "Solo"; id = android.view.View.generateViewId() }
+        val radioGroupBtn = RadioButton(this).apply { text = "Group"; id = android.view.View.generateViewId() }
+        val radioSoloBtn = RadioButton(this).apply { text = "Solo"; id = android.view.View.generateViewId() }
         radioGroup.addView(radioGroupBtn)
         radioGroup.addView(radioSoloBtn)
 
@@ -74,7 +78,7 @@ class ProfileActivity : AppCompatActivity(), ProfileContract.View {
                 val selected = if (radioSoloBtn.isChecked) "Solo" else "Group"
                 (application as CustomApp).updateUserMode(selected)
                 presenter.loadProfileDetails()
-                showSuccessMessage()
+                toast("Mode switched to $selected")
             }
             .setNegativeButton("Cancel", null)
             .show()
