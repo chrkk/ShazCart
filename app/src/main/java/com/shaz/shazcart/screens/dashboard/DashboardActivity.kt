@@ -2,6 +2,7 @@ package com.shaz.shazcart.screens.dashboard
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -30,8 +31,29 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         setupRecyclerViews()
         setupButtons()
+        setupModeUI() // Applies Solo or Group logic dynamically
 
         presenter.loadDashboard()
+    }
+
+    private fun setupModeUI() {
+        val user = (application as CustomApp).getUser()
+        val textviewGroupMode = findViewById<TextView>(R.id.textviewGroupMode)
+
+        if (user.mode == "Solo") {
+            // Adjust the header text
+            textviewGroupMode.text = "Solo Mode — Personal Dashboard"
+
+            // Hide housemates section completely
+            findViewById<TextView>(R.id.textviewHousematesTitle).visibility = View.GONE
+            findViewById<Button>(R.id.buttonAddHousemate).visibility = View.GONE
+            findViewById<RecyclerView>(R.id.recyclerviewHousemates).visibility = View.GONE
+
+            // Rename Shared Grocery List to Personal
+            findViewById<TextView>(R.id.textviewSharedListTitle).text = "Personal Grocery List"
+        } else {
+            textviewGroupMode.text = "Group Mode — Shared Boarding House"
+        }
     }
 
     private fun setupRecyclerViews() {
