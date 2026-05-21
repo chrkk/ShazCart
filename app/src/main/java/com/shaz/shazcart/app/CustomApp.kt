@@ -16,7 +16,7 @@ class CustomApp : Application() {
     }
 
     fun getUser(): User {
-        val username = prefs.getString("usernams", "user") ?: "user"
+        val username = prefs.getString("username", "user") ?: "user"
         val password = prefs.getString("password", "1234") ?: "1234"
         return User(username, password)
     }
