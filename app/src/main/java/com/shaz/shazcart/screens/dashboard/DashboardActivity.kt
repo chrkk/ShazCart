@@ -37,6 +37,13 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         presenter.loadDashboard()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (::presenter.isInitialized) {
+            presenter.loadDashboard()
+        }
+    }
+
     private fun setupModeUI() {
         val user = (application as CustomApp).getUser()
         val textviewGroupMode = findViewById<TextView>(R.id.textviewGroupMode)
