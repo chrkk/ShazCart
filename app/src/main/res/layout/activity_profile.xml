@@ -1,90 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:background="@color/dashboard_bg"
+    android:fillViewport="true">
 
-    <!-- Header -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:background="#059669"
-        android:padding="24dp">
-
-        <TextView
-            android:id="@+id/textviewProfileName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="User Name"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_centerInParent="true"/>
-
-        <TextView
-            android:id="@+id/textviewProfileMode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Account Mode"
-            android:textColor="#BBF7D0"
-            android:textSize="16sp"
-            android:layout_below="@id/textviewProfileName"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"/>
-    </RelativeLayout>
-
-    <!-- Stats Card -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_margin="24dp"
-        android:padding="20dp"
-        android:background="#F3F4F6"
-        android:elevation="4dp">
+        android:padding="20dp">
 
-        <TextView
-            android:id="@+id/textviewStatsTitle"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tracking Stats"
-            android:textColor="#059669"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="@color/dashboard_primary"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
 
-        <TextView
-            android:id="@+id/textviewStatsBody1"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_gradient_hero"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <TextView
+                    android:id="@+id/textviewProfileHero"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textviewProfileName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="User Name"
+                    android:textColor="@color/white"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textviewProfileMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Account mode"
+                    android:textColor="#D9FCEB"
+                    android:textSize="15sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Stat 1: --"
-            android:textColor="#374151"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="@color/dashboard_surface"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp"
+            app:strokeColor="@color/dashboard_border"
+            app:strokeWidth="1dp">
 
-        <TextView
-            android:id="@+id/textviewStatsBody2"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/textviewStatsTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile summary"
+                    android:textColor="@color/dashboard_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textviewStatsBody1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Primary stat"
+                    android:textColor="@color/dashboard_text"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/textviewStatsBody2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Secondary stat"
+                    android:textColor="@color/dashboard_text"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/textviewStatsFooter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Helpful note"
+                    android:textColor="@color/dashboard_text_muted"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Stat 2: --"
-            android:textColor="#374151"
-            android:textSize="16sp"/>
+            app:cardBackgroundColor="@color/dashboard_surface_alt"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/dashboard_border"
+            app:strokeWidth="1dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:text="This screen now reflects your saved account settings instead of sample data."
+                android:textColor="@color/dashboard_text_muted"
+                android:textSize="14sp" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonBackDashboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp"
+            android:text="Back to dashboard"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/dashboard_accent"
+            app:cornerRadius="18dp" />
 
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
-
-    <Button
-        android:id="@+id/buttonBackDashboard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="24dp"
-        android:text="Back to Dashboard"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#374151"/>
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

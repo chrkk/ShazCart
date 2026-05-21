@@ -27,20 +27,18 @@ class ProfileActivity : AppCompatActivity(), ProfileContract.View {
 
     override fun displayUserInfo(user: User) {
         findViewById<TextView>(R.id.textviewProfileName).text = user.username
-        findViewById<TextView>(R.id.textviewProfileMode).text = "${user.mode} Account"
+        findViewById<TextView>(R.id.textviewProfileMode).text = if (user.mode == "Solo") {
+            "Solo account"
+        } else {
+            "Group account"
+        }
     }
 
-    override fun displayGroupContributions(contributed: Double, owed: Double) {
-        findViewById<TextView>(R.id.textviewStatsTitle).text = "Housemate Contributions"
-        findViewById<TextView>(R.id.textviewStatsBody1).text = "Total Contributed: ₱$contributed"
-        findViewById<TextView>(R.id.textviewStatsBody2).text = "Remaining Owed: ₱$owed"
-    }
-
-    override fun displaySoloBudget(spent: Double, budgetLimit: Double) {
-        findViewById<TextView>(R.id.textviewStatsTitle).text = "Personal Budget Monitor"
-        findViewById<TextView>(R.id.textviewStatsBody1).text = "Currently Spent: ₱$spent"
-
-        val remaining = budgetLimit - spent
-        findViewById<TextView>(R.id.textviewStatsBody2).text = "Budget Remaining: ₱$remaining / ₱$budgetLimit"
+    override fun displayProfileSummary(summary: ProfileContract.ProfileSummary) {
+        findViewById<TextView>(R.id.textviewProfileHero).text = summary.headline
+        findViewById<TextView>(R.id.textviewStatsTitle).text = summary.modeLabel
+        findViewById<TextView>(R.id.textviewStatsBody1).text = "${summary.primaryLabel}: ${summary.primaryValue}"
+        findViewById<TextView>(R.id.textviewStatsBody2).text = "${summary.secondaryLabel}: ${summary.secondaryValue}"
+        findViewById<TextView>(R.id.textviewStatsFooter).text = summary.note
     }
 }
