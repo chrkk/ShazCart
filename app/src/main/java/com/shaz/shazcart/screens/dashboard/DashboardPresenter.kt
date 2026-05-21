@@ -69,6 +69,8 @@ class DashboardPresenter(
     private fun refreshView() {
         val (totalItems, pendingItems, totalSpent) = model.getSummary()
         view.showSummary(totalItems, pendingItems, totalSpent)
+        val (needsToPay, shouldReceive) = model.getSettlementSummary()
+        view.showSettlementSummary(needsToPay, shouldReceive)
         view.showHousematesStatus(model.getHousematesStatus().toList())
         view.showSharedList(model.getSharedList().toList())
 

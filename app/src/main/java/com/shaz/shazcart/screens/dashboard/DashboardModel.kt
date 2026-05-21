@@ -56,13 +56,14 @@ class DashboardModel(private val app: CustomApp) {
         for (housemate in housemates) {
             val paid = paidAmounts[housemate.name] ?: 0.0
             val balance = splitAmount - paid - housemate.settlementPaid
+            housemate.netBalance = balance
 
             if (balance > 0.01) {
                 housemate.amountOwed = balance
-                housemate.status = "Owes ₱${String.format("%.2f", balance)} 🔴"
+                housemate.status = "Needs to pay ₱${String.format("%.2f", balance)} 🔴"
             } else if (balance < -0.01) {
                 housemate.amountOwed = 0.0
-                housemate.status = "Overpaid ₱${String.format("%.2f", -balance)} 🟢"
+                housemate.status = "Should receive ₱${String.format("%.2f", -balance)} 🟢"
             } else {
                 housemate.amountOwed = 0.0
                 housemate.status = "Settled ✅"
@@ -76,6 +77,36 @@ class DashboardModel(private val app: CustomApp) {
     }
 
     fun getSharedList(): List<GroceryItem> = groceryList
+
+    fun getSettlementSummary(): Pair<String, String> {
+        updateExpenseSplit()
+
+        val payers = housemates
+            .filter { it.netBalance > 0.01 }
+            .sortedByDescending { it.netBalance }
+
+        val receivers = housemates
+            .filter { it.netBalance < -0.01 }
+            .sortedByDescending { kotlin.math.abs(it.netBalance) }
+
+        val needsToPaySummary = if (payers.isEmpty()) {
+            "Everyone is settled."
+        } else {
+            payers.joinToString("\n") { housemate ->
+                "• ${housemate.name} · ₱${String.format("%.2f", housemate.netBalance)}"
+            }
+        }
+
+        val shouldReceiveSummary = if (receivers.isEmpty()) {
+            "Nobody is owed money."
+        } else {
+            receivers.joinToString("\n") { housemate ->
+                "• ${housemate.name} · ₱${String.format("%.2f", kotlin.math.abs(housemate.netBalance))}"
+            }
+        }
+
+        return needsToPaySummary to shouldReceiveSummary
+    }
 
     fun addHousemate(housemate: Housemate) {
         housemates.add(housemate)
