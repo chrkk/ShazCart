@@ -9,6 +9,7 @@ interface DashboardContract {
         fun showHousematesStatus(housemates: List<Housemate>)
         fun showSharedList(items: List<GroceryItem>)
         fun showMessage(message: String)
+        fun showBudgetWarning(message: String, isCritical: Boolean) // NEW
     }
 
     interface Presenter {
@@ -17,5 +18,6 @@ interface DashboardContract {
         fun removeHousemate(position: Int)
         fun addGroceryItem()
         fun removeGroceryItem(position: Int)
+        fun updateBudget(amount: Double) // NEW
     }
 }
