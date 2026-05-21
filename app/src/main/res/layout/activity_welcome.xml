@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="@color/dashboard_bg">
 
     <LinearLayout
         android:id="@+id/layoutWelcomePage"
@@ -12,49 +13,52 @@
         android:paddingBottom="32dp">
 
         <!-- Header -->
-        <RelativeLayout
-            android:id="@+id/layoutHeader"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="260dp"
-            android:padding="24dp"
-            android:background="@drawable/bg_gradient_green">
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="0dp">
 
-            <!-- Big circular logo -->
-            <ImageView
-                android:id="@+id/imageviewLogo"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:src="@drawable/shazcartgreenlogo2"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="32dp"
-                android:scaleType="centerCrop"
-                android:background="@drawable/bg_circle_white"
-                android:contentDescription="ShazCart Logo"/>
-
-            <!-- Tagline -->
-            <TextView
-                android:id="@+id/textviewTagline"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Smart Grocery Coordination"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_below="@id/imageviewLogo"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="16dp"/>
+                android:orientation="vertical"
+                android:background="@drawable/bg_gradient_green"
+                android:padding="20dp"
+                android:gravity="center_horizontal">
 
-            <TextView
-                android:id="@+id/textviewSubTagline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="For boarding houses, dorms, roommates"
-                android:textColor="#BBF7D0"
-                android:textSize="14sp"
-                android:layout_below="@id/textviewTagline"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="6dp"/>
-        </RelativeLayout>
+                <ImageView
+                    android:id="@+id/imageviewLogo"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:src="@drawable/shazcartgreenlogo2"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/bg_circle_white"
+                    android:contentDescription="ShazCart Logo" />
+
+                <TextView
+                    android:id="@+id/textviewTagline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Smart Grocery Coordination"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="12dp" />
+
+                <TextView
+                    android:id="@+id/textviewSubTagline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="For boarding houses, dorms, roommates"
+                    android:textColor="#BBF7D0"
+                    android:textSize="14sp"
+                    android:layout_marginTop="6dp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Features -->
         <LinearLayout
@@ -110,31 +114,33 @@
             android:id="@+id/layoutButtons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:gravity="center"
             android:layout_margin="24dp">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonGetStarted"
-                android:layout_width="0dp"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Get Started"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#059669"
-                android:layout_marginEnd="8dp"
-                android:elevation="2dp"/>
+                android:text="Create Account"
+                app:cornerRadius="12dp"
+                app:backgroundTint="@color/dashboard_accent"
+                android:textColor="@android:color/white"
+                android:layout_marginBottom="12dp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonLogin"
-                android:layout_width="0dp"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Log In"
-                android:textColor="#059669"
-                android:backgroundTint="#FFFFFF"
-                android:layout_marginStart="8dp"
-                android:elevation="2dp"/>
+                android:text="Sign In"
+                app:cornerRadius="12dp"
+                android:strokeWidth="1dp"
+                app:strokeColor="@color/dashboard_border"
+                android:backgroundTint="@android:color/transparent"
+                android:textColor="@color/dashboard_primary" />
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

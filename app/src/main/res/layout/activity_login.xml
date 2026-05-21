@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layoutLoginPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:background="@color/dashboard_bg">
 
     <!-- Header -->
     <RelativeLayout
@@ -79,121 +80,102 @@
     </RelativeLayout>
 
     <!-- Form Card -->
-    <LinearLayout
-        android:id="@+id/layoutFormCard"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp"
-        android:layout_marginTop="-40dp"
-        android:background="#FFFFFF"
-        android:elevation="4dp">
-        <!-- Error message -->
-        <TextView
-            android:id="@+id/textviewError"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#FEE2E2"
-            android:textColor="#DC2626"
-            android:padding="12dp"
-            android:visibility="gone"
-            android:textSize="13sp"/>
-        <!-- Email -->
-        <TextView
-            android:id="@+id/textviewEmailLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Email Address"
-            android:textColor="#374151"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
-        <EditText
-            android:id="@+id/edittextEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="you@example.com"
-            android:inputType="textEmailAddress"
-            android:padding="12dp"
-            android:background="@drawable/bg_input"
-            android:textSize="14sp"
-            android:textColor="#1F2937"
-            android:textColorHint="#9CA3AF"/>
-        <!-- Password -->
-        <TextView
-            android:id="@+id/textviewPasswordLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Password"
-            android:textColor="#374151"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
-        <EditText
-            android:id="@+id/edittextPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter your password"
-            android:inputType="textPassword"
-            android:padding="12dp"
-            android:background="@drawable/bg_input"
-            android:textSize="14sp"
-            android:textColor="#1F2937"
-            android:textColorHint="#9CA3AF"/>
+        android:layout_margin="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:text="Launch mode"
-            android:textColor="#374151"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
-
-        <RadioGroup
-            android:id="@+id/radioGroupMode"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp">
+            android:orientation="vertical"
+            android:padding="20dp">
 
-            <RadioButton
-                android:id="@+id/radioGroup"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Group"
-                android:textColor="#374151"
-                android:checked="true"/>
+                android:hint="Email address">
 
-            <RadioButton
-                android:id="@+id/radioSolo"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edittextEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Solo"
-                android:textColor="#374151"/>
-        </RadioGroup>
-        <!-- Sign In -->
-        <Button
-            android:id="@+id/buttonSignIn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Sign In"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#059669"
-            android:layout_marginTop="24dp"/>
-        <!-- Sign Up -->
-        <TextView
-            android:id="@+id/textviewSignUp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Don't have an account? Sign Up"
-            android:textColor="#059669"
-            android:textStyle="bold"
-            android:layout_gravity="center"
-            android:layout_marginTop="12dp"/>
-    </LinearLayout>
+                android:hint="Password"
+                android:layout_marginTop="12dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edittextPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Launch mode"
+                android:textColor="@color/dashboard_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <RadioGroup
+                android:id="@+id/radioGroupMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="6dp">
+
+                <RadioButton
+                    android:id="@+id/radioGroup"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Group"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/radioSolo"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Solo" />
+
+            </RadioGroup>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonSignIn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="Sign In"
+                app:cornerRadius="12dp"
+                app:backgroundTint="@color/dashboard_accent"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/textviewSignUp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Don't have an account? Sign Up"
+                android:textColor="@color/dashboard_primary"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginTop="12dp" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
     <!-- Demo hint -->
     <TextView
         android:id="@+id/textviewDemoHint"
