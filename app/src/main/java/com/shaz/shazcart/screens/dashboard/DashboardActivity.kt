@@ -208,7 +208,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         val editButtonLabel = if (housemate.settlementPaid > 0.0) "Edit payment" else "Record payment"
         val editButton = Button(this).apply {
             text = editButtonLabel
-            textColor = android.graphics.Color.WHITE
+            setTextColor(android.graphics.Color.WHITE)
             backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#059669"))
             setOnClickListener {
                 showEditHousematePaymentDialog(
@@ -222,7 +222,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         val settleButton = Button(this).apply {
             text = "Settle full balance"
-            textColor = android.graphics.Color.WHITE
+            setTextColor(android.graphics.Color.WHITE)
             backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#3B82F6"))
             setOnClickListener {
                 presenter.settleHousemate(position)
@@ -231,7 +231,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         val clearButton = Button(this).apply {
             text = "Clear payment"
-            textColor = android.graphics.Color.WHITE
+            setTextColor(android.graphics.Color.WHITE)
             backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#6B7280"))
             visibility = if (housemate.settlementPaid > 0.0) View.VISIBLE else View.GONE
             setOnClickListener {
@@ -241,7 +241,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         val deleteButton = Button(this).apply {
             text = "Delete housemate"
-            textColor = android.graphics.Color.WHITE
+            setTextColor(android.graphics.Color.WHITE)
             backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#DC2626"))
             setOnClickListener {
                 showRemoveHousemateDialog(position)
@@ -306,7 +306,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             val button = Button(this).apply {
                 text = "${entry.name} · ₱${String.format("%.2f", entry.amount)}"
                 isAllCaps = false
-                textColor = android.graphics.Color.WHITE
+                setTextColor(android.graphics.Color.WHITE)
                 backgroundTintList = android.content.res.ColorStateList.valueOf(
                     android.graphics.Color.parseColor(if (entry.isPayer) "#DC2626" else "#059669")
                 )
