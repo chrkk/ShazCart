@@ -23,6 +23,8 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
     private lateinit var presenter: DashboardPresenter
     private lateinit var housematesAdapter: DashboardRecyclerAdapter<Housemate>
     private lateinit var groceryAdapter: DashboardRecyclerAdapter<GroceryItem>
+    private var settlementPayers: List<DashboardContract.SettlementEntry> = emptyList()
+    private var settlementReceivers: List<DashboardContract.SettlementEntry> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -139,6 +141,10 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             val intent = Intent(this, com.shaz.shazcart.screens.reminder.ReminderActivity::class.java)
             startActivity(intent)
         }
+
+        findViewById<Button>(R.id.buttonManageSplit).setOnClickListener {
+            showSplitActionsDialog()
+        }
     }
 
     private fun showSetBudgetDialog() {
@@ -180,34 +186,78 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
     private fun showHousemateActionsDialog(position: Int) {
         val housemate = housematesAdapter.getItem(position) ?: return
-        val summary = buildString {
-            append(housemate.status.ifBlank { "No split yet" })
-            if (housemate.settlementPaid > 0.0) {
-                append("\nAlready paid: ₱${String.format("%.2f", housemate.settlementPaid)}")
+        showHousematePaymentDialog(position, housemate)
+    }
+
+    private fun showHousematePaymentDialog(position: Int, housemate: Housemate) {
+        val container = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(48, 24, 48, 0)
+        }
+
+        val statusText = TextView(this).apply {
+            text = buildString {
+                append(housemate.status.ifBlank { "No split yet" })
+                if (housemate.settlementPaid > 0.0) {
+                    append("\nAlready paid: ₱${String.format("%.2f", housemate.settlementPaid)}")
+                }
+            }
+            setTextColor(android.graphics.Color.parseColor("#374151"))
+        }
+
+        val editButtonLabel = if (housemate.settlementPaid > 0.0) "Edit payment" else "Record payment"
+        val editButton = Button(this).apply {
+            text = editButtonLabel
+            textColor = android.graphics.Color.WHITE
+            backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#059669"))
+            setOnClickListener {
+                showEditHousematePaymentDialog(
+                    position = position,
+                    housemateName = housemate.name,
+                    currentAmount = housemate.settlementPaid,
+                    isEdit = housemate.settlementPaid > 0.0
+                )
             }
         }
 
-        val actions = mutableListOf(
-            if (housemate.settlementPaid > 0.0) "Edit payment" else "Record payment",
-            "Settle full balance"
-        )
-        if (housemate.settlementPaid > 0.0) {
-            actions.add("Clear payment")
+        val settleButton = Button(this).apply {
+            text = "Settle full balance"
+            textColor = android.graphics.Color.WHITE
+            backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#3B82F6"))
+            setOnClickListener {
+                presenter.settleHousemate(position)
+            }
         }
-        actions.add("Delete housemate")
+
+        val clearButton = Button(this).apply {
+            text = "Clear payment"
+            textColor = android.graphics.Color.WHITE
+            backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#6B7280"))
+            visibility = if (housemate.settlementPaid > 0.0) View.VISIBLE else View.GONE
+            setOnClickListener {
+                presenter.clearHousematePayment(position)
+            }
+        }
+
+        val deleteButton = Button(this).apply {
+            text = "Delete housemate"
+            textColor = android.graphics.Color.WHITE
+            backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#DC2626"))
+            setOnClickListener {
+                showRemoveHousemateDialog(position)
+            }
+        }
+
+        container.addView(statusText)
+        container.addView(editButton)
+        container.addView(settleButton)
+        container.addView(clearButton)
+        container.addView(deleteButton)
 
         AlertDialog.Builder(this)
             .setTitle(housemate.name)
-            .setMessage(summary)
-            .setItems(actions.toTypedArray()) { _, which ->
-                when (actions[which]) {
-                    "Record payment" -> showEditHousematePaymentDialog(position, housemate.name, 0.0, false)
-                    "Edit payment" -> showEditHousematePaymentDialog(position, housemate.name, housemate.settlementPaid, true)
-                    "Settle full balance" -> presenter.settleHousemate(position)
-                    "Clear payment" -> presenter.clearHousematePayment(position)
-                    "Delete housemate" -> showRemoveHousemateDialog(position)
-                }
-            }
+            .setView(container)
+            .setPositiveButton("Close", null)
             .show()
     }
 
@@ -243,6 +293,67 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                 }
             }
             .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showSplitActionsDialog() {
+        val container = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(48, 24, 48, 0)
+        }
+
+        fun addEntryButton(entry: DashboardContract.SettlementEntry) {
+            val button = Button(this).apply {
+                text = "${entry.name} · ₱${String.format("%.2f", entry.amount)}"
+                isAllCaps = false
+                textColor = android.graphics.Color.WHITE
+                backgroundTintList = android.content.res.ColorStateList.valueOf(
+                    android.graphics.Color.parseColor(if (entry.isPayer) "#DC2626" else "#059669")
+                )
+                setOnClickListener {
+                    val housemate = housematesAdapter.getItem(entry.position)
+                    if (housemate != null) {
+                        showHousematePaymentDialog(entry.position, housemate)
+                    }
+                }
+            }
+            container.addView(button)
+        }
+
+        val header = TextView(this).apply {
+            text = "Tap a name to open record, edit, settle, or clear actions."
+            setTextColor(android.graphics.Color.parseColor("#6B7280"))
+        }
+        container.addView(header)
+
+        if (settlementPayers.isEmpty() && settlementReceivers.isEmpty()) {
+            container.addView(TextView(this).apply {
+                text = "Everyone is settled."
+                setTextColor(android.graphics.Color.parseColor("#111827"))
+            })
+        } else {
+            if (settlementPayers.isNotEmpty()) {
+                container.addView(TextView(this).apply {
+                    text = "Needs to pay"
+                    setTextColor(android.graphics.Color.parseColor("#DC2626"))
+                })
+                settlementPayers.forEach { addEntryButton(it) }
+            }
+
+            if (settlementReceivers.isNotEmpty()) {
+                container.addView(TextView(this).apply {
+                    text = "Should receive"
+                    setTextColor(android.graphics.Color.parseColor("#059669"))
+                    setPadding(0, 16, 0, 0)
+                })
+                settlementReceivers.forEach { addEntryButton(it) }
+            }
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Split actions")
+            .setView(container)
+            .setPositiveButton("Close", null)
             .show()
     }
 
@@ -328,47 +439,15 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         payers: List<DashboardContract.SettlementEntry>,
         receivers: List<DashboardContract.SettlementEntry>
     ) {
-        val needsContainer = findViewById<android.widget.LinearLayout>(R.id.layoutNeedsToPayChips)
-        val receivesContainer = findViewById<android.widget.LinearLayout>(R.id.layoutShouldReceiveChips)
+        settlementPayers = payers
+        settlementReceivers = receivers
 
-        needsContainer.removeAllViews()
-        receivesContainer.removeAllViews()
-
-        fun addChip(container: android.widget.LinearLayout, entry: DashboardContract.SettlementEntry) {
-            val chip = Button(this).apply {
-                text = "${entry.name} · ₱${String.format("%.2f", entry.amount)}"
-                textSize = 12f
-                isAllCaps = false
-                setPadding(20, 8, 20, 8)
-                setTextColor(android.graphics.Color.WHITE)
-                backgroundTintList = android.content.res.ColorStateList.valueOf(
-                    android.graphics.Color.parseColor(if (entry.isPayer) "#DC2626" else "#059669")
-                )
-                setOnClickListener {
-                    showHousemateActionsDialog(entry.position)
-                }
+        findViewById<Button>(R.id.buttonManageSplit).text =
+            if (payers.isEmpty() && receivers.isEmpty()) {
+                "All settled"
+            } else {
+                "Open split actions (${payers.size + receivers.size})"
             }
-            val params = android.widget.LinearLayout.LayoutParams(
-                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
-                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
-            )
-            params.topMargin = 8
-            container.addView(chip, params)
-        }
-
-        if (payers.isEmpty()) {
-            val text = TextView(this).apply { this.text = "Everyone is settled." }
-            needsContainer.addView(text)
-        } else {
-            payers.forEach { addChip(needsContainer, it) }
-        }
-
-        if (receivers.isEmpty()) {
-            val text = TextView(this).apply { this.text = "Nobody is owed money." }
-            receivesContainer.addView(text)
-        } else {
-            receivers.forEach { addChip(receivesContainer, it) }
-        }
     }
 
     override fun showHousematesStatus(housemates: List<Housemate>) {
