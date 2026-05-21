@@ -490,6 +490,13 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         findViewById<TextView>(R.id.textviewTotalItems).text = "$totalItems Items"
         findViewById<TextView>(R.id.textviewPendingItems).text = "$pendingItems Pending"
         findViewById<TextView>(R.id.textviewTotalSpent).text = "₱$totalSpent Spent"
+        // If we're in Solo mode, update the personal summary card numbers
+        val user = (application as CustomApp).getUser()
+        if (user.mode == "Solo") {
+            findViewById<TextView>(R.id.textviewBudgetLimit).text = "₱${String.format("%.2f", user.budgetLimit)}"
+            val remaining = user.budgetLimit - totalSpent
+            findViewById<TextView>(R.id.textviewBudgetRemaining).text = "₱${String.format("%.2f", remaining)}"
+        }
     }
 
     override fun showSettlementSummary(needsToPay: String, shouldReceive: String) {
