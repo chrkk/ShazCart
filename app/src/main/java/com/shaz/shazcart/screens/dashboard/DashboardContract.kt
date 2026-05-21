@@ -4,9 +4,17 @@ import com.shaz.shazcart.data.GroceryItem
 import com.shaz.shazcart.data.Housemate
 
 interface DashboardContract {
+    data class SettlementEntry(
+        val name: String,
+        val amount: Double,
+        val isPayer: Boolean,
+        val position: Int
+    )
+
     interface View {
         fun showSummary(totalItems: Int, pendingItems: Int, totalSpent: Double)
         fun showSettlementSummary(needsToPay: String, shouldReceive: String)
+        fun showSettlementEntries(payers: List<SettlementEntry>, receivers: List<SettlementEntry>)
         fun showHousematesStatus(housemates: List<Housemate>)
         fun showSharedList(items: List<GroceryItem>)
         fun showMessage(message: String)

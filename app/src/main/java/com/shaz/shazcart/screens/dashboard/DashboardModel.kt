@@ -108,6 +108,28 @@ class DashboardModel(private val app: CustomApp) {
         return needsToPaySummary to shouldReceiveSummary
     }
 
+    fun getSettlementEntries(): Pair<List<DashboardContract.SettlementEntry>, List<DashboardContract.SettlementEntry>> {
+        updateExpenseSplit()
+
+        val payers = housemates.mapIndexedNotNull { index, housemate ->
+            if (housemate.netBalance > 0.01) {
+                DashboardContract.SettlementEntry(housemate.name, housemate.netBalance, true, index)
+            } else {
+                null
+            }
+        }.sortedByDescending { it.amount }
+
+        val receivers = housemates.mapIndexedNotNull { index, housemate ->
+            if (housemate.netBalance < -0.01) {
+                DashboardContract.SettlementEntry(housemate.name, kotlin.math.abs(housemate.netBalance), false, index)
+            } else {
+                null
+            }
+        }.sortedByDescending { it.amount }
+
+        return payers to receivers
+    }
+
     fun addHousemate(housemate: Housemate) {
         housemates.add(housemate)
     }

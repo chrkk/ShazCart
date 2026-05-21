@@ -324,6 +324,53 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         findViewById<TextView>(R.id.textviewShouldReceive).text = shouldReceive
     }
 
+    override fun showSettlementEntries(
+        payers: List<DashboardContract.SettlementEntry>,
+        receivers: List<DashboardContract.SettlementEntry>
+    ) {
+        val needsContainer = findViewById<android.widget.LinearLayout>(R.id.layoutNeedsToPayChips)
+        val receivesContainer = findViewById<android.widget.LinearLayout>(R.id.layoutShouldReceiveChips)
+
+        needsContainer.removeAllViews()
+        receivesContainer.removeAllViews()
+
+        fun addChip(container: android.widget.LinearLayout, entry: DashboardContract.SettlementEntry) {
+            val chip = Button(this).apply {
+                text = "${entry.name} · ₱${String.format("%.2f", entry.amount)}"
+                textSize = 12f
+                isAllCaps = false
+                setPadding(20, 8, 20, 8)
+                setTextColor(android.graphics.Color.WHITE)
+                backgroundTintList = android.content.res.ColorStateList.valueOf(
+                    android.graphics.Color.parseColor(if (entry.isPayer) "#DC2626" else "#059669")
+                )
+                setOnClickListener {
+                    showHousemateActionsDialog(entry.position)
+                }
+            }
+            val params = android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            params.topMargin = 8
+            container.addView(chip, params)
+        }
+
+        if (payers.isEmpty()) {
+            val text = TextView(this).apply { this.text = "Everyone is settled." }
+            needsContainer.addView(text)
+        } else {
+            payers.forEach { addChip(needsContainer, it) }
+        }
+
+        if (receivers.isEmpty()) {
+            val text = TextView(this).apply { this.text = "Nobody is owed money." }
+            receivesContainer.addView(text)
+        } else {
+            receivers.forEach { addChip(receivesContainer, it) }
+        }
+    }
+
     override fun showHousematesStatus(housemates: List<Housemate>) {
         housematesAdapter.submitList(housemates)
     }

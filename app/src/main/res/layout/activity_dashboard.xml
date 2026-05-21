@@ -147,6 +147,13 @@
                     android:text="Everyone is settled."
                     android:textColor="#111827"
                     android:textSize="13sp"/>
+
+                <LinearLayout
+                    android:id="@+id/layoutNeedsToPayChips"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="8dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -171,6 +178,13 @@
                     android:text="Nobody is owed money."
                     android:textColor="#111827"
                     android:textSize="13sp"/>
+
+                <LinearLayout
+                    android:id="@+id/layoutShouldReceiveChips"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="8dp"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

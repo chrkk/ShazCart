@@ -71,6 +71,8 @@ class DashboardPresenter(
         view.showSummary(totalItems, pendingItems, totalSpent)
         val (needsToPay, shouldReceive) = model.getSettlementSummary()
         view.showSettlementSummary(needsToPay, shouldReceive)
+        val (payers, receivers) = model.getSettlementEntries()
+        view.showSettlementEntries(payers, receivers)
         view.showHousematesStatus(model.getHousematesStatus().toList())
         view.showSharedList(model.getSharedList().toList())
 
