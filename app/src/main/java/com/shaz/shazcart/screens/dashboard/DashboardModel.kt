@@ -89,6 +89,10 @@ class DashboardModel(private val app: CustomApp) {
         groceryList.add(item)
     }
 
+    fun getHousemateNames(): List<String> {
+        return housemates.map { it.name }
+    }
+
     fun removeGroceryItem(position: Int): GroceryItem {
         return groceryList.removeAt(position)
     }

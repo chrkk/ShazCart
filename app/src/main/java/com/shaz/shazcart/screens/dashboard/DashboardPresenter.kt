@@ -24,9 +24,9 @@ class DashboardPresenter(
         refreshView()
     }
 
-    override fun addGroceryItem() {
-        model.addGroceryItem(GroceryItem("New Item", "Unassigned", "₱0"))
-        view.showMessage("Grocery item has been added.")
+    override fun addGroceryItem(itemName: String, assignedTo: String, price: String) {
+        model.addGroceryItem(GroceryItem(itemName, assignedTo, price))
+        view.showMessage("$itemName has been added.")
         refreshView()
     }
 

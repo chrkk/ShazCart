@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -105,7 +106,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         }
 
         findViewById<Button>(R.id.buttonAddGrocery).setOnClickListener {
-            presenter.addGroceryItem()
+            showAddGroceryDialog()
         }
 
         findViewById<Button>(R.id.buttonLogout)?.setOnClickListener {
@@ -138,6 +139,53 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             .setPositiveButton("Save") { _, _ ->
                 val amount = input.text.toString().toDoubleOrNull() ?: 0.0
                 presenter.updateBudget(amount)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showAddGroceryDialog() {
+        val user = (application as CustomApp).getUser()
+
+        val container = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(48, 24, 48, 0)
+        }
+
+        val itemNameInput = EditText(this).apply {
+            hint = "Item name"
+        }
+
+        val assignedToInput = EditText(this).apply {
+            hint = "Buyer / assigned to"
+            setText(if (user.mode == "Solo") user.username else "")
+        }
+
+        val priceInput = EditText(this).apply {
+            hint = "Price"
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        }
+
+        container.addView(itemNameInput)
+        container.addView(assignedToInput)
+        container.addView(priceInput)
+
+        AlertDialog.Builder(this)
+            .setTitle("Add Grocery Item")
+            .setMessage("Assign a buyer before saving the item.")
+            .setView(container)
+            .setPositiveButton("Save") { _, _ ->
+                val itemName = itemNameInput.text.toString().trim()
+                val assignedTo = assignedToInput.text.toString().trim()
+                val priceValue = priceInput.text.toString().trim()
+
+                if (itemName.isEmpty() || assignedTo.isEmpty() || priceValue.isEmpty()) {
+                    showMessage("Please fill in item name, buyer, and price.")
+                    return@setPositiveButton
+                }
+
+                val normalizedPrice = if (priceValue.startsWith("₱")) priceValue else "₱$priceValue"
+                presenter.addGroceryItem(itemName, assignedTo, normalizedPrice)
             }
             .setNegativeButton("Cancel", null)
             .show()
