@@ -36,10 +36,28 @@ class DashboardPresenter(
         refreshView()
     }
 
+    override fun updateBudget(amount: Double) {
+        model.setBudgetLimit(amount)
+        view.showMessage("Budget limit updated to ₱$amount")
+        refreshView()
+    }
+
     private fun refreshView() {
         val (totalItems, pendingItems, totalSpent) = model.getSummary()
         view.showSummary(totalItems, pendingItems, totalSpent)
         view.showHousematesStatus(model.getHousematesStatus().toList())
         view.showSharedList(model.getSharedList().toList())
+
+        // Budget evaluation
+        if (model.getMode() == "Solo") {
+            val budget = model.getBudgetLimit()
+            if (budget > 0) {
+                if (totalSpent > budget) {
+                    view.showBudgetWarning("CRITICAL: You are over your budget of ₱$budget!", true)
+                } else if (totalSpent >= budget * 0.8) {
+                    view.showBudgetWarning("Warning: You are close to your budget of ₱$budget.", false)
+                }
+            }
+        }
     }
 }
