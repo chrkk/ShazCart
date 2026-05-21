@@ -559,7 +559,14 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
     }
 
     override fun showSharedList(items: List<GroceryItem>) {
-        groceryAdapter.submitList(items)
+        // In Solo mode, only show grocery items assigned to the current user.
+        val user = (application as CustomApp).getUser()
+        val listToShow = if (user.mode == "Solo") {
+            items.filter { it.assignedTo == user.displayName }
+        } else {
+            items
+        }
+        groceryAdapter.submitList(listToShow)
     }
 
     override fun showMessage(message: String) {
