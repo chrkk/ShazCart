@@ -175,12 +175,33 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <Button
-        android:id="@+id/buttonLogout"
+    <!-- Bottom Buttons Menu -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_margin="16dp"
-        android:backgroundTint="#EF4444"
-        android:text="Logout"
-        android:textColor="#FFFFFF"/>
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/buttonProfile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="#3B82F6"
+            android:text="My Profile"
+            android:textColor="#FFFFFF"/>
+
+        <Button
+            android:id="@+id/buttonLogout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="#EF4444"
+            android:text="Logout"
+            android:textColor="#FFFFFF"/>
+    </LinearLayout>
+
 </LinearLayout>
