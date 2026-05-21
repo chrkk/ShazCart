@@ -18,13 +18,15 @@ class CustomApp : Application() {
     fun getUser(): User {
         val username = prefs.getString("username", "user") ?: "user"
         val password = prefs.getString("password", "1234") ?: "1234"
-        return User(username, password)
+        val mode = prefs.getString("mode", "Group") ?: "Group"
+        return User(username, password, mode)
     }
 
     fun setUser(newUser: User) {
         prefs.edit()
             .putString("username", newUser.username)
             .putString("password", newUser.password)
+            .putString("mode", newUser.mode)
             .apply()
     }
 
@@ -40,6 +42,7 @@ class CustomApp : Application() {
         prefs.edit()
             .remove("username")
             .remove("password")
+            .remove("mode")
             .putBoolean("is_logged_in", false)
             .apply()
     }
