@@ -39,6 +39,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
     private fun setupModeUI() {
         val user = (application as CustomApp).getUser()
         val textviewGroupMode = findViewById<TextView>(R.id.textviewGroupMode)
+        val buttonAddHousemate = findViewById<Button>(R.id.buttonAddHousemate)
 
         if (user.mode == "Solo") {
             // Adjust the header text
@@ -46,8 +47,11 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
             // Hide housemates section completely
             findViewById<TextView>(R.id.textviewHousematesTitle).visibility = View.GONE
-            findViewById<Button>(R.id.buttonAddHousemate).visibility = View.GONE
             findViewById<RecyclerView>(R.id.recyclerviewHousemates).visibility = View.GONE
+
+            // Repurpose the housemate button into a Budget Limit setter
+            buttonAddHousemate.text = "Set Budget Limit"
+            buttonAddHousemate.setBackgroundColor(android.graphics.Color.parseColor("#3B82F6")) // Blue
 
             // Rename Shared Grocery List to Personal
             findViewById<TextView>(R.id.textviewSharedListTitle).text = "Personal Grocery List"
