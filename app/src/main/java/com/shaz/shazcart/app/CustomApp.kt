@@ -19,7 +19,8 @@ class CustomApp : Application() {
         val username = prefs.getString("username", "user") ?: "user"
         val password = prefs.getString("password", "1234") ?: "1234"
         val mode = prefs.getString("mode", "Group") ?: "Group"
-        return User(username, password, mode)
+        val budgetLimit = prefs.getFloat("budgetLimit", 0.0f).toDouble()
+        return User(username, password, mode, budgetLimit)
     }
 
     fun setUser(newUser: User) {
@@ -27,6 +28,7 @@ class CustomApp : Application() {
             .putString("username", newUser.username)
             .putString("password", newUser.password)
             .putString("mode", newUser.mode)
+            .putFloat("budgetLimit", newUser.budgetLimit.toFloat()) // Save as float
             .apply()
     }
 
