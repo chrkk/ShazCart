@@ -1,37 +1,46 @@
 package com.shaz.shazcart.app
 
 import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import com.shaz.shazcart.data.User
 
 class CustomApp : Application() {
-    private var user = User("user", "1234")
-    private var isLoggedIn: Boolean = false
+    private lateinit var prefs: SharedPreferences
 
     override fun onCreate() {
         super.onCreate()
         Log.e("Custom app", "onCreate is called")
+        prefs = getSharedPreferences("shazcart_prefs", Context.MODE_PRIVATE)
     }
 
-    fun getUser() = this.user
-
-    fun setLoggedIn(loggedIn: Boolean) {
-        this.isLoggedIn = loggedIn
-    }
-
-    fun isUserLoggedIn(): Boolean {
-        return isLoggedIn
-    }
-
-    fun clearUser() {
-        user = User("", "")
-        // BUG FIX: isLoggedIn was never reset to false here.
-        // Without this, WelcomeActivity.isUserLoggedIn() returns true even after logout,
-        // causing the app to immediately redirect back to DashboardActivity on relaunch.
-        isLoggedIn = false
+    fun getUser(): User {
+        val username = prefs.getString("username", "user") ?: "user"
+        val password = prefs.getString("password", "1234") ?: "1234"
+        return User(username, password)
     }
 
     fun setUser(newUser: User) {
-        user = newUser
+        prefs.edit()
+            .putString("username", newUser.username)
+            .putString("password", newUser.password)
+            .apply()
+    }
+
+    fun setLoggedIn(loggedIn: Boolean) {
+        prefs.edit().putBoolean("is_logged_in", loggedIn).apply()
+    }
+
+    fun isUserLoggedIn(): Boolean {
+        return prefs.getBoolean("is_logged_in", false)
+    }
+
+    fun clearUser() {
+        prefs.edit()
+            .remove("username")
+            .remove("password")
+            .putBoolean("is_logged_in", false)
+            .apply()
     }
 }

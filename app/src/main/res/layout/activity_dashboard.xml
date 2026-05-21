@@ -6,13 +6,13 @@
     android:orientation="vertical"
     android:background="#FFFFFF">
 
-    <!-- Header — unchanged from original ShazCart design -->
+    <!-- Header -->
     <RelativeLayout
         android:id="@+id/layoutHeader"
         android:layout_width="match_parent"
         android:layout_height="160dp"
         android:padding="16dp"
-        android:background="@drawable/bg_gradient_green">
+        android:background="#059669">
 
         <TextView
             android:id="@+id/textviewGreeting"
@@ -46,7 +46,7 @@
             android:layout_marginTop="12dp"/>
     </RelativeLayout>
 
-    <!-- Summary Boxes — unchanged from original ShazCart design -->
+    <!-- Summary Boxes -->
     <LinearLayout
         android:id="@+id/layoutSummary"
         android:layout_width="match_parent"
@@ -61,10 +61,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="6 Total Items"
+            android:text="0 Total Items"
             android:textColor="#374151"
             android:textSize="14sp"
-            android:background="@drawable/bg_card"
             android:padding="12dp"/>
 
         <TextView
@@ -73,10 +72,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="4 Pending"
+            android:text="0 Pending"
             android:textColor="#374151"
             android:textSize="14sp"
-            android:background="@drawable/bg_card"
             android:padding="12dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"/>
@@ -87,26 +85,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="₱1,800 Total Spent"
+            android:text="₱0 Total Spent"
             android:textColor="#374151"
             android:textSize="14sp"
-            android:background="@drawable/bg_card"
             android:padding="12dp"/>
-
-        <ListView
-            android:id="@+id/listviewHousemates"
-            android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:clipToPadding="false"
-            android:divider="@null"
-            android:dividerHeight="0dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp" />
     </LinearLayout>
 
-    <!-- Scrollable body — needed because two ListViews inside a LinearLayout require
-         each ListView to have a fixed height; ScrollView wraps both sections -->
-    <ScrollView
+    <!-- Scrollable body for RecyclerViews -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -116,11 +102,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- ═══════════════════════════════════════════
-                 HOUSEMATES SECTION
-                 Mirrors the ListView + Add/Remove pattern from ListViewPrac activity_setting.xml
-                 ═══════════════════════════════════════════ -->
-
+            <!-- HOUSEMATES SECTION -->
             <TextView
                 android:id="@+id/textviewHousematesTitle"
                 android:layout_width="match_parent"
@@ -134,7 +116,6 @@
                 android:paddingTop="16dp"
                 android:paddingBottom="8dp"/>
 
-            <!-- Add Item button — mirrors button_add_item from ListViewPrac activity_setting.xml -->
             <Button
                 android:id="@+id/buttonAddHousemate"
                 android:layout_width="match_parent"
@@ -146,14 +127,15 @@
                 android:text="＋ Add Housemate"
                 android:textColor="#FFFFFF"/>
 
-            <!-- ListView for Housemates — mirrors listview from ListViewPrac activity_setting.xml
-                 Fixed height required when ListView is inside a ScrollView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerviewHousemates"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
 
-            <!-- ═══════════════════════════════════════════
-                 SHARED GROCERY LIST SECTION
-                 Mirrors the ListView + Add/Remove pattern from ListViewPrac activity_setting.xml
-                 ═══════════════════════════════════════════ -->
-
+            <!-- SHARED GROCERY LIST SECTION -->
             <TextView
                 android:id="@+id/textviewSharedListTitle"
                 android:layout_width="match_parent"
@@ -167,7 +149,6 @@
                 android:paddingTop="16dp"
                 android:paddingBottom="8dp"/>
 
-            <!-- Add Item button — mirrors button_add_item from ListViewPrac activity_setting.xml -->
             <Button
                 android:id="@+id/buttonAddGrocery"
                 android:layout_width="match_parent"
@@ -179,88 +160,27 @@
                 android:text="＋ Add Grocery Item"
                 android:textColor="#FFFFFF"/>
 
-            <!-- ListView for Grocery List — mirrors listview from ListViewPrac activity_setting.xml
-                 Fixed height required when ListView is inside a ScrollView -->
-            <ListView
-                android:id="@+id/listviewGrocery"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerviewGrocery"
                 android:layout_width="match_parent"
-                android:layout_height="280dp"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:divider="@null"
-                android:dividerHeight="0dp"
                 android:clipToPadding="false"/>
 
-            <!-- Bottom spacing -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="16dp"/>
-
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-    <!-- Bottom Navigation — unchanged from original ShazCart design -->
-    <LinearLayout
-        android:id="@+id/layoutBottomNav"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:weightSum="4"
-        android:background="#F3F4F6"
-        android:gravity="center">
-
-        <TextView
-            android:id="@+id/navHome"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="🏠 Home"
-            android:textColor="#059669"
-            android:textSize="12sp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/navExpenses"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="💰 Expenses"
-            android:textColor="#374151"
-            android:textSize="12sp"/>
-
-        <TextView
-            android:id="@+id/navReminders"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="⏰ Reminders"
-            android:textColor="#374151"
-            android:textSize="12sp"/>
-
-        <TextView
-            android:id="@+id/navProfile"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="👤 Profile"
-            android:textColor="#374151"
-            android:textSize="12sp"/>
-
-    </LinearLayout>
-
-    <!-- Logout Button — unchanged from original ShazCart design -->
     <Button
         android:id="@+id/buttonLogout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Logout"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#DC2626"
         android:layout_margin="16dp"
-        android:elevation="2dp"/>
-
+        android:backgroundTint="#EF4444"
+        android:text="Logout"
+        android:textColor="#FFFFFF"/>
 </LinearLayout>
