@@ -67,7 +67,13 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             // Rename Shared Grocery List to Personal
             findViewById<TextView>(R.id.textviewSharedListTitle).text = "Personal Grocery List"
         } else {
+            // Restore Group UI when switching back from Solo
             textviewGroupMode.text = "Group Mode — Shared Boarding House"
+            findViewById<TextView>(R.id.textviewHousematesTitle).visibility = View.VISIBLE
+            findViewById<RecyclerView>(R.id.recyclerviewHousemates).visibility = View.VISIBLE
+            buttonAddHousemate.text = "＋ Add Housemate"
+            buttonAddHousemate.setBackgroundColor(ContextCompat.getColor(this, R.color.dashboard_success))
+            findViewById<TextView>(R.id.textviewSharedListTitle).text = "Shared Grocery List"
         }
     }
 
