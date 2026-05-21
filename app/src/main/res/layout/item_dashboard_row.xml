@@ -1,45 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:background="@drawable/bg_list_item"
-    android:padding="12dp"
-    android:layout_marginBottom="6dp">
+    android:layout_marginBottom="10dp"
+    app:cardBackgroundColor="@color/dashboard_surface"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="1dp"
+    app:strokeColor="@color/dashboard_border"
+    app:strokeWidth="1dp"
+    android:foreground="?attr/selectableItemBackground">
 
-    <!-- Icon — mirrors imageview_profile_pic from ListViewPrac item row -->
-    <ImageView
-        android:id="@+id/imageview_row_icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/shazcartgreenlogo2"
-        android:contentDescription="Item icon"/>
-
-    <!-- Text column — mirrors textview_fullname from ListViewPrac item row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="12dp">
+        android:orientation="horizontal"
+        android:padding="14dp"
+        android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/textview_row_primary"
-            android:layout_width="match_parent"
+        <FrameLayout
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_card"
+            android:foregroundGravity="center">
+
+            <ImageView
+                android:id="@+id/imageview_row_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/shazcartgreenlogo2"
+                android:contentDescription="Item icon"/>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="#111827"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
 
-        <TextView
-            android:id="@+id/textview_row_secondary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#6B7280"
-            android:textSize="12sp"
-            android:layout_marginTop="2dp"/>
+            <TextView
+                android:id="@+id/textview_row_primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dashboard_text"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
 
+            <TextView
+                android:id="@+id/textview_row_secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:textColor="@color/dashboard_text_muted"
+                android:textSize="12sp"/>
+        </LinearLayout>
     </LinearLayout>
-
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>
