@@ -66,6 +66,12 @@ class DashboardPresenter(
         refreshView()
     }
 
+    override fun recordSettlement(from: String, to: String, amount: Double) {
+        model.addSettlement(from, to, amount)
+        view.showMessage("Recorded transfer ₱$amount from $from to $to")
+        refreshView()
+    }
+
     private fun refreshView() {
         val (totalItems, pendingItems, totalSpent) = model.getSummary()
         view.showSummary(totalItems, pendingItems, totalSpent)

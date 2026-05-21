@@ -204,6 +204,63 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             .show()
     }
 
+    private fun showRecordSettlementDialog() {
+        val names = housematesAdapter.getAllItems().map { (it as com.shaz.shazcart.data.Housemate).name }
+        if (names.size < 2) {
+            showMessage("Need at least two housemates to record a transfer.")
+            return
+        }
+
+        val container = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(48, 24, 48, 0)
+        }
+
+        val fromInput = AutoCompleteTextView(this).apply {
+            hint = "From (payer)"
+            threshold = 1
+            setAdapter(ArrayAdapter(this@DashboardActivity, android.R.layout.simple_dropdown_item_1line, names))
+        }
+
+        val toInput = AutoCompleteTextView(this).apply {
+            hint = "To (receiver)"
+            threshold = 1
+            setAdapter(ArrayAdapter(this@DashboardActivity, android.R.layout.simple_dropdown_item_1line, names))
+        }
+
+        val amountInput = EditText(this).apply {
+            hint = "Amount"
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        }
+
+        container.addView(fromInput)
+        container.addView(toInput)
+        container.addView(amountInput)
+
+        AlertDialog.Builder(this)
+            .setTitle("Record transfer")
+            .setMessage("Record a payment transfer between housemates.")
+            .setView(container)
+            .setPositiveButton("Save") { _, _ ->
+                val from = fromInput.text.toString().trim()
+                val to = toInput.text.toString().trim()
+                val amount = amountInput.text.toString().toDoubleOrNull() ?: 0.0
+
+                if (from.isEmpty() || to.isEmpty() || amount <= 0.0) {
+                    showMessage("Please provide payer, receiver, and amount.")
+                    return@setPositiveButton
+                }
+                if (from == to) {
+                    showMessage("Payer and receiver must be different.")
+                    return@setPositiveButton
+                }
+
+                (presenter as DashboardContract.Presenter).recordSettlement(from, to, amount)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
     private fun showSetBudgetDialog() {
         val input = android.widget.EditText(this)
         input.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
@@ -402,6 +459,11 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                 text = "Everyone is settled."
                 setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_text))
             })
+            // Add a quick 'Record transfer' CTA even when settled
+            container.addView(Button(this).apply {
+                text = "Record transfer"
+                setOnClickListener { showRecordSettlementDialog() }
+            })
         } else {
             if (settlementPayers.isNotEmpty()) {
                 container.addView(TextView(this).apply {
@@ -419,6 +481,11 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                 })
                 settlementReceivers.forEach { addEntryButton(it) }
             }
+            // Add a Record transfer button below entries
+            container.addView(Button(this).apply {
+                text = "Record transfer"
+                setOnClickListener { showRecordSettlementDialog() }
+            })
         }
 
         AlertDialog.Builder(this)

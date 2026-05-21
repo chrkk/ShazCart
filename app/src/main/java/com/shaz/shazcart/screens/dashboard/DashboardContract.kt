@@ -33,5 +33,6 @@ interface DashboardContract {
         fun addGroceryItem(itemName: String, assignedTo: String, price: String)
         fun removeGroceryItem(position: Int)
         fun updateBudget(amount: Double) // NEW
+        fun recordSettlement(from: String, to: String, amount: Double)
     }
 }

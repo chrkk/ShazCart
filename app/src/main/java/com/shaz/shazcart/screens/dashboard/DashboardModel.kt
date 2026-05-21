@@ -2,6 +2,7 @@ package com.shaz.shazcart.screens.dashboard
 
 import com.shaz.shazcart.app.CustomApp
 import com.shaz.shazcart.data.GroceryItem
+import com.shaz.shazcart.data.Settlement
 import com.shaz.shazcart.data.Housemate
 
 class DashboardModel(private val app: CustomApp) {
@@ -9,6 +10,7 @@ class DashboardModel(private val app: CustomApp) {
     private val housemates = mutableListOf<Housemate>()
 
     private val groceryList = mutableListOf<GroceryItem>()
+    private val settlements = mutableListOf<Settlement>()
 
     private fun parsePrice(price: String): Double {
         return price.replace("₱", "").replace(",", "").trim().toDoubleOrNull() ?: 0.0
@@ -43,10 +45,25 @@ class DashboardModel(private val app: CustomApp) {
             paidAmounts[item.assignedTo] = currentPaid + price
         }
 
-        // 2. Compare what they should pay (splitAmount) vs what they already paid or received
+        // 2. Also account for recorded settlements (transfers between housemates)
+        val outAmounts = mutableMapOf<String, Double>()
+        val inAmounts = mutableMapOf<String, Double>()
+        for (h in housemates) {
+            outAmounts[h.name] = 0.0
+            inAmounts[h.name] = 0.0
+        }
+        for (s in settlements) {
+            outAmounts[s.from] = (outAmounts[s.from] ?: 0.0) + s.amount
+            inAmounts[s.to] = (inAmounts[s.to] ?: 0.0) + s.amount
+        }
+
+        // 3. Compare what they should pay (splitAmount) vs what they already paid or received and transfers
         for (housemate in housemates) {
             val paid = paidAmounts[housemate.name] ?: 0.0
-            val balance = splitAmount - paid - housemate.settlementPaid + housemate.settlementReceived
+            val out = outAmounts[housemate.name] ?: 0.0
+            val inAmt = inAmounts[housemate.name] ?: 0.0
+
+            val balance = splitAmount - paid - housemate.settlementPaid + housemate.settlementReceived - out + inAmt
             housemate.netBalance = balance
 
             if (balance > 0.01) {
@@ -61,6 +78,14 @@ class DashboardModel(private val app: CustomApp) {
             }
         }
     }
+
+    fun addSettlement(from: String, to: String, amount: Double) {
+        settlements.add(Settlement(from, to, amount))
+    }
+
+    fun getSettlements(): List<Settlement> = settlements
+
+    fun removeSettlement(index: Int): Settlement = settlements.removeAt(index)
 
     fun getHousematesStatus(): List<Housemate> {
         updateExpenseSplit() // Recalculate dependencies before returning
