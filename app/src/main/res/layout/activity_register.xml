@@ -16,7 +16,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:background="@drawable/bg_gradient_green"
+            android:background="#059669"
             android:padding="16dp">
 
             <TextView
@@ -38,7 +38,7 @@
             android:orientation="vertical"
             android:padding="24dp"
             android:layout_marginTop="-40dp"
-            android:background="@drawable/bg_card"
+            android:background="#FFFFFF"
             android:elevation="6dp">
 
             <!-- Name -->
@@ -55,7 +55,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:hint="Your name"
-                android:background="@drawable/bg_input"
                 android:padding="12dp"/>
 
             <!-- Email -->
@@ -73,7 +72,6 @@
                 android:layout_height="48dp"
                 android:hint="you@example.com"
                 android:inputType="textEmailAddress"
-                android:background="@drawable/bg_input"
                 android:padding="12dp"/>
 
             <!-- Password -->
@@ -91,8 +89,41 @@
                 android:layout_height="48dp"
                 android:hint="Enter password"
                 android:inputType="textPassword"
-                android:background="@drawable/bg_input"
                 android:padding="12dp"/>
+
+            <!-- Account Mode Selection -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Account Mode"
+                android:textColor="#374151"
+                android:textStyle="bold"
+                android:layout_marginTop="24dp"/>
+
+            <RadioGroup
+                android:id="@+id/radioGroupMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <RadioButton
+                    android:id="@+id/radioGroup"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Group Mode"
+                    android:textColor="#374151"
+                    android:checked="true"/>
+
+                <RadioButton
+                    android:id="@+id/radioSolo"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:textColor="#374151"
+                    android:text="Solo Mode"/>
+            </RadioGroup>
 
             <!-- Register Button -->
             <Button
