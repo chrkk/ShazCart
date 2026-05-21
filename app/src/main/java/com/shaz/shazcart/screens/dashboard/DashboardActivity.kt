@@ -105,6 +105,11 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             startActivity(intent)
             finish()
         }
+
+        findViewById<Button>(R.id.buttonProfile)?.setOnClickListener {
+            val intent = Intent(this, com.shaz.shazcart.screens.profile.ProfileActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun showRemoveHousemateDialog(position: Int) {

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- Header -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:background="#059669"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/textviewProfileName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User Name"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true"/>
+
+        <TextView
+            android:id="@+id/textviewProfileMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Account Mode"
+            android:textColor="#BBF7D0"
+            android:textSize="16sp"
+            android:layout_below="@id/textviewProfileName"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"/>
+    </RelativeLayout>
+
+    <!-- Stats Card -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="24dp"
+        android:padding="20dp"
+        android:background="#F3F4F6"
+        android:elevation="4dp">
+
+        <TextView
+            android:id="@+id/textviewStatsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tracking Stats"
+            android:textColor="#059669"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/textviewStatsBody1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stat 1: --"
+            android:textColor="#374151"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/textviewStatsBody2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stat 2: --"
+            android:textColor="#374151"
+            android:textSize="16sp"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/buttonBackDashboard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:text="Back to Dashboard"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#374151"/>
+
+</LinearLayout>
