@@ -91,39 +91,13 @@
                 android:inputType="textPassword"
                 android:padding="12dp"/>
 
-            <!-- Account Mode Selection -->
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Account Mode"
-                android:textColor="#374151"
-                android:textStyle="bold"
-                android:layout_marginTop="24dp"/>
-
-            <RadioGroup
-                android:id="@+id/radioGroupMode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <RadioButton
-                    android:id="@+id/radioGroup"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Group Mode"
-                    android:textColor="#374151"
-                    android:checked="true"/>
-
-                <RadioButton
-                    android:id="@+id/radioSolo"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:textColor="#374151"
-                    android:text="Solo Mode"/>
-            </RadioGroup>
+                android:layout_marginTop="24dp"
+                android:text="You can choose Solo or Group mode after signing in."
+                android:textColor="#6B7280"
+                android:textSize="13sp"/>
 
             <!-- Register Button -->
             <Button

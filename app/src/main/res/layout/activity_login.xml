@@ -140,6 +140,40 @@
             android:textSize="14sp"
             android:textColor="#1F2937"
             android:textColorHint="#9CA3AF"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Launch mode"
+            android:textColor="#374151"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+        <RadioGroup
+            android:id="@+id/radioGroupMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <RadioButton
+                android:id="@+id/radioGroup"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Group"
+                android:textColor="#374151"
+                android:checked="true"/>
+
+            <RadioButton
+                android:id="@+id/radioSolo"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Solo"
+                android:textColor="#374151"/>
+        </RadioGroup>
         <!-- Sign In -->
         <Button
             android:id="@+id/buttonSignIn"
@@ -165,7 +199,7 @@
         android:id="@+id/textviewDemoHint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="💡 Demo: Enter any email , password to continue"
+            android:text="💡 Choose Solo or Group before signing in"
         android:textColor="#047857"
         android:textSize="12sp"
         android:gravity="center"

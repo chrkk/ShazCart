@@ -3,6 +3,7 @@ package com.shaz.shazcart.screens.login
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.shaz.shazcart.R
@@ -24,7 +25,10 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
         findViewById<Button>(R.id.buttonSignIn).setOnClickListener {
             val email: String = getEditTextValue(R.id.edittextEmail)
             val password: String = getEditTextValue(R.id.edittextPassword)
-            presenter.validateCredentials(email, password)
+            val radioGroupMode = findViewById<RadioGroup>(R.id.radioGroupMode)
+            val isSolo = radioGroupMode.checkedRadioButtonId == R.id.radioSolo
+            val selectedMode = if (isSolo) "Solo" else "Group"
+            presenter.validateCredentials(email, password, selectedMode)
         }
 
         findViewById<TextView>(R.id.textviewSignUp).setOnClickListener {

@@ -26,7 +26,7 @@ class ProfileActivity : AppCompatActivity(), ProfileContract.View {
     }
 
     override fun displayUserInfo(user: User) {
-        findViewById<TextView>(R.id.textviewProfileName).text = user.username
+        findViewById<TextView>(R.id.textviewProfileName).text = user.displayName
         findViewById<TextView>(R.id.textviewProfileMode).text = if (user.mode == "Solo") {
             "Solo account"
         } else {

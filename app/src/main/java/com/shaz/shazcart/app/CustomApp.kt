@@ -24,20 +24,28 @@ class CustomApp : Application() {
     }
 
     fun getUser(): User {
-        val username = prefs.getString("username", "user") ?: "user"
+        val displayName = prefs.getString("displayName", "User") ?: "User"
+        val email = prefs.getString("email", "") ?: ""
         val password = prefs.getString("password", "1234") ?: "1234"
         val mode = prefs.getString("mode", "Group") ?: "Group"
         val budgetLimit = prefs.getFloat("budgetLimit", 0.0f).toDouble()
-        return User(username, password, mode, budgetLimit)
+        return User(displayName, email, password, mode, budgetLimit)
     }
 
     fun setUser(newUser: User) {
         prefs.edit()
-            .putString("username", newUser.username)
+            .putString("displayName", newUser.displayName)
+            .putString("email", newUser.email)
             .putString("password", newUser.password)
             .putString("mode", newUser.mode)
-            .putFloat("budgetLimit", newUser.budgetLimit.toFloat()) // Save as float
+            .putFloat("budgetLimit", newUser.budgetLimit.toFloat())
             .apply()
+    }
+
+    fun updateUserMode(mode: String) {
+        val user = getUser()
+        user.mode = mode
+        setUser(user)
     }
 
     fun setLoggedIn(loggedIn: Boolean) {
@@ -50,9 +58,11 @@ class CustomApp : Application() {
 
     fun clearUser() {
         prefs.edit()
-            .remove("username")
+            .remove("displayName")
+            .remove("email")
             .remove("password")
             .remove("mode")
+            .remove("budgetLimit")
             .putBoolean("is_logged_in", false)
             .apply()
     }

@@ -386,7 +386,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         val assignedToInput = EditText(this).apply {
             hint = "Buyer / assigned to"
-            setText(if (user.mode == "Solo") user.username else "")
+            setText(if (user.mode == "Solo") user.displayName else "")
         }
 
         val priceInput = EditText(this).apply {
