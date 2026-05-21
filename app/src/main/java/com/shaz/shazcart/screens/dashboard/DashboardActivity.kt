@@ -146,6 +146,46 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         findViewById<Button>(R.id.buttonManageSplit).setOnClickListener {
             showSplitActionsDialog()
         }
+
+        findViewById<Button>(R.id.buttonSwitchMode).setOnClickListener {
+            showModeSwitchDialog()
+        }
+    }
+
+    private fun showModeSwitchDialog() {
+        val container = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(48, 24, 48, 0)
+        }
+
+        val radioGroup = android.widget.RadioGroup(this).apply {
+            orientation = android.widget.RadioGroup.HORIZONTAL
+        }
+
+        val radioGroupBtn = android.widget.RadioButton(this).apply { text = "Group"; id = android.view.View.generateViewId() }
+        val radioSoloBtn = android.widget.RadioButton(this).apply { text = "Solo"; id = android.view.View.generateViewId() }
+        radioGroup.addView(radioGroupBtn)
+        radioGroup.addView(radioSoloBtn)
+
+        // Pre-select current mode
+        val currentMode = (application as CustomApp).getUser().mode
+        if (currentMode == "Solo") radioSoloBtn.isChecked = true else radioGroupBtn.isChecked = true
+
+        container.addView(radioGroup)
+
+        AlertDialog.Builder(this)
+            .setTitle("Select mode")
+            .setMessage("Choose Solo for personal use or Group for shared house management.")
+            .setView(container)
+            .setPositiveButton("Apply") { _, _ ->
+                val selected = if (radioSoloBtn.isChecked) "Solo" else "Group"
+                (application as CustomApp).updateUserMode(selected)
+                setupModeUI()
+                presenter.loadDashboard()
+                showMessage("Mode switched to $selected")
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun showSetBudgetDialog() {

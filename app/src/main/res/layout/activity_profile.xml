@@ -142,5 +142,17 @@
             app:backgroundTint="@color/dashboard_accent"
             app:cornerRadius="18dp" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonSwitchMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="Switch Mode"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/dashboard_accent"
+            app:cornerRadius="18dp" />
+
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
