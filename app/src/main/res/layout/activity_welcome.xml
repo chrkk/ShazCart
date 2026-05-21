@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:id="@+id/layoutWelcomePage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="32dp">
+
+        <!-- Header -->
+        <RelativeLayout
+            android:id="@+id/layoutHeader"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:padding="24dp"
+            android:background="@drawable/bg_gradient_green">
+
+            <!-- Big circular logo -->
+            <ImageView
+                android:id="@+id/imageviewLogo"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:src="@drawable/shazcartgreenlogo2"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="32dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/bg_circle_white"
+                android:contentDescription="ShazCart Logo"/>
+
+            <!-- Tagline -->
+            <TextView
+                android:id="@+id/textviewTagline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Smart Grocery Coordination"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_below="@id/imageviewLogo"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"/>
+
+            <TextView
+                android:id="@+id/textviewSubTagline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="For boarding houses, dorms, roommates"
+                android:textColor="#BBF7D0"
+                android:textSize="14sp"
+                android:layout_below="@id/textviewTagline"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="6dp"/>
+        </RelativeLayout>
+
+        <!-- Features -->
+        <LinearLayout
+            android:id="@+id/layoutFeatures"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/textviewFeatureGroupMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="👥 Group Mode — Share lists, split costs"
+                android:textColor="#374151"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp"/>
+
+            <TextView
+                android:id="@+id/textviewFeatureBudget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="💰 Budget Tracker — Monitor your spending"
+                android:textColor="#374151"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp"/>
+
+            <TextView
+                android:id="@+id/textviewFeatureReminders"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⏰ Reminders — Never forget essentials"
+                android:textColor="#374151"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <!-- Hero block -->
+        <TextView
+            android:id="@+id/textviewHeroPlaceholder"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:gravity="center"
+            android:text="(Image Placeholder)"
+            android:textColor="#9CA3AF"
+            android:textSize="16sp"
+            android:background="#F3F4F6"
+            android:layout_margin="16dp"
+            android:padding="12dp"/>
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:id="@+id/layoutButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_margin="24dp">
+
+            <Button
+                android:id="@+id/buttonGetStarted"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Get Started"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#059669"
+                android:layout_marginEnd="8dp"
+                android:elevation="2dp"/>
+
+            <Button
+                android:id="@+id/buttonLogin"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Log In"
+                android:textColor="#059669"
+                android:backgroundTint="#FFFFFF"
+                android:layout_marginStart="8dp"
+                android:elevation="2dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

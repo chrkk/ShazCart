@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:id="@+id/layoutRegisterPage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="32dp">
+
+        <!-- Header -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@drawable/bg_gradient_green"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/textviewRegisterTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create Account"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+
+        <!-- Form Card -->
+        <LinearLayout
+            android:id="@+id/layoutFormCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:layout_marginTop="-40dp"
+            android:background="@drawable/bg_card"
+            android:elevation="6dp">
+
+            <!-- Name -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Full Name"
+                android:textColor="#374151"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"/>
+
+            <EditText
+                android:id="@+id/edittextName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="Your name"
+                android:background="@drawable/bg_input"
+                android:padding="12dp"/>
+
+            <!-- Email -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email Address"
+                android:textColor="#374151"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"/>
+
+            <EditText
+                android:id="@+id/edittextEmail"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="you@example.com"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/bg_input"
+                android:padding="12dp"/>
+
+            <!-- Password -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Password"
+                android:textColor="#374151"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"/>
+
+            <EditText
+                android:id="@+id/edittextPassword"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="Enter password"
+                android:inputType="textPassword"
+                android:background="@drawable/bg_input"
+                android:padding="12dp"/>
+
+            <!-- Register Button -->
+            <Button
+                android:id="@+id/buttonRegister"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Register"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#059669"
+                android:layout_marginTop="24dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
