@@ -15,7 +15,7 @@ interface DashboardContract {
 
     interface Presenter {
         fun loadDashboard()
-        fun addHousemate()
+        fun addHousemate(name: String)
         fun removeHousemate(position: Int)
         fun addGroceryItem(itemName: String, assignedTo: String, price: String)
         fun removeGroceryItem(position: Int)
