@@ -7,10 +7,10 @@ import com.shaz.shazcart.data.Housemate
 class DashboardModel(private val app: CustomApp) {
 
     private val housemates = mutableListOf(
-        Housemate("Marco", "Settled ✅"),
-        Housemate("Lea", "Owes ₱80 ⚠️"),
-        Housemate("Juan", "Owes ₱240 ⚠️"),
-        Housemate("Ana", "Settled ✅")
+        Housemate("Marco", 0.0, ""),
+        Housemate("Lea", 0.0, ""),
+        Housemate("Juan", 0.0, ""),
+        Housemate("Ana", 0.0, "")
     )
 
     private val groceryList = mutableListOf(
@@ -33,7 +33,48 @@ class DashboardModel(private val app: CustomApp) {
         return Triple(totalItems, pendingItems, totalSpent)
     }
 
-    fun getHousematesStatus(): List<Housemate> = housemates
+    private fun updateExpenseSplit() {
+        if (housemates.isEmpty()) return
+
+        val (_, _, totalSpent) = getSummary()
+        val splitAmount = totalSpent / housemates.size
+
+        // 1. Calculate how much each housemate has ALREADY paid based on assigned items
+        val paidAmounts = mutableMapOf<String, Double>()
+        for (housemate in housemates) {
+            paidAmounts[housemate.name] = 0.0
+        }
+
+        for (item in groceryList) {
+            val priceStr = item.price.replace("₱", "").replace(",", "").trim()
+            val price = priceStr.toDoubleOrNull() ?: 0.0
+            val currentPaid = paidAmounts[item.assignedTo] ?: 0.0
+            paidAmounts[item.assignedTo] = currentPaid + price
+        }
+
+        // 2. Compare what they should pay (splitAmount) vs what they already paid
+        for (housemate in housemates) {
+            val paid = paidAmounts[housemate.name] ?: 0.0
+            val balance = splitAmount - paid
+
+            if (balance > 0.01) {
+                housemate.amountOwed = balance
+                housemate.status = "Owes ₱${String.format("%.2f", balance)} 🔴"
+            } else if (balance < -0.01) {
+                housemate.amountOwed = 0.0
+                housemate.status = "Gets back ₱${String.format("%.2f", -balance)} 🟢"
+            } else {
+                housemate.amountOwed = 0.0
+                housemate.status = "Settled ✅"
+            }
+        }
+    }
+
+    fun getHousematesStatus(): List<Housemate> {
+        updateExpenseSplit() // Recalculate dependencies before returning
+        return housemates
+    }
+
     fun getSharedList(): List<GroceryItem> = groceryList
 
     fun addHousemate(housemate: Housemate) {
