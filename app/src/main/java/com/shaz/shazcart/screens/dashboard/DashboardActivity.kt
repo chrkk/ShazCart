@@ -319,6 +319,11 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         findViewById<TextView>(R.id.textviewTotalSpent).text = "₱$totalSpent Spent"
     }
 
+    override fun showSettlementSummary(needsToPay: String, shouldReceive: String) {
+        findViewById<TextView>(R.id.textviewNeedsToPay).text = needsToPay
+        findViewById<TextView>(R.id.textviewShouldReceive).text = shouldReceive
+    }
+
     override fun showHousematesStatus(housemates: List<Housemate>) {
         housematesAdapter.submitList(housemates)
     }
