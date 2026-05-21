@@ -187,7 +187,10 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             }
         }
 
-        val actions = mutableListOf("Record payment", "Settle full balance")
+        val actions = mutableListOf(
+            if (housemate.settlementPaid > 0.0) "Edit payment" else "Record payment",
+            "Settle full balance"
+        )
         if (housemate.settlementPaid > 0.0) {
             actions.add("Clear payment")
         }
@@ -198,7 +201,8 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             .setMessage(summary)
             .setItems(actions.toTypedArray()) { _, which ->
                 when (actions[which]) {
-                    "Record payment" -> showRecordHousematePaymentDialog(position, housemate.name)
+                    "Record payment" -> showEditHousematePaymentDialog(position, housemate.name, 0.0, false)
+                    "Edit payment" -> showEditHousematePaymentDialog(position, housemate.name, housemate.settlementPaid, true)
                     "Settle full balance" -> presenter.settleHousemate(position)
                     "Clear payment" -> presenter.clearHousematePayment(position)
                     "Delete housemate" -> showRemoveHousemateDialog(position)
@@ -207,15 +211,24 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             .show()
     }
 
-    private fun showRecordHousematePaymentDialog(position: Int, housemateName: String) {
+    private fun showEditHousematePaymentDialog(
+        position: Int,
+        housemateName: String,
+        currentAmount: Double,
+        isEdit: Boolean
+    ) {
         val input = EditText(this).apply {
             hint = "Amount already paid"
             inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+            if (currentAmount > 0.0) {
+                setText(String.format("%.2f", currentAmount))
+                setSelection(text.length)
+            }
         }
 
         AlertDialog.Builder(this)
-            .setTitle("Record payment")
-            .setMessage("How much has $housemateName already paid?")
+            .setTitle(if (isEdit) "Edit payment" else "Record payment")
+            .setMessage(if (isEdit) "Update how much $housemateName has already paid." else "How much has $housemateName already paid?")
             .setView(input)
             .setPositiveButton("Save") { _, _ ->
                 val amount = input.text.toString().toDoubleOrNull()
@@ -223,7 +236,11 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                     showMessage("Enter a valid amount.")
                     return@setPositiveButton
                 }
-                presenter.recordHousematePayment(position, amount)
+                if (isEdit) {
+                    presenter.setHousematePayment(position, amount)
+                } else {
+                    presenter.recordHousematePayment(position, amount)
+                }
             }
             .setNegativeButton("Cancel", null)
             .show()

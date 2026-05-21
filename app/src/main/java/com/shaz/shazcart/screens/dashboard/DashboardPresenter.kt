@@ -30,6 +30,12 @@ class DashboardPresenter(
         refreshView()
     }
 
+    override fun setHousematePayment(position: Int, amount: Double) {
+        val updated = model.setHousematePayment(position, amount)
+        view.showMessage("${updated.name} payment updated.")
+        refreshView()
+    }
+
     override fun settleHousemate(position: Int) {
         val updated = model.settleHousemate(position)
         view.showMessage("${updated.name} marked as settled.")

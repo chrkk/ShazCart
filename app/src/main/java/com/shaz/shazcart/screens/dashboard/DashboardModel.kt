@@ -91,6 +91,12 @@ class DashboardModel(private val app: CustomApp) {
         return housemates[position]
     }
 
+    fun setHousematePayment(position: Int, amount: Double): Housemate {
+        housemates[position].settlementPaid = amount
+        updateExpenseSplit()
+        return housemates[position]
+    }
+
     fun settleHousemate(position: Int): Housemate {
         updateExpenseSplit()
         val housemate = housemates[position]
