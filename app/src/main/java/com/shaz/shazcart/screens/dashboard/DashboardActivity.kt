@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -438,9 +440,23 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             hint = "Item name"
         }
 
-        val assignedToInput = EditText(this).apply {
-            hint = "Buyer / assigned to"
-            setText(if (user.mode == "Solo") user.displayName else "")
+        // Build assigned-to input: free text in Solo, autocomplete from housemates in Group
+        val assignedToInputView: View = if (user.mode == "Solo") {
+            EditText(this).apply {
+                hint = "Buyer / assigned to"
+                setText(user.displayName)
+            }
+        } else {
+            val names = housematesAdapter.getAllItems().map { (it as com.shaz.shazcart.data.Housemate).name }
+            if (names.isEmpty()) {
+                showMessage("No housemates yet. Add a housemate first.")
+                return
+            }
+            AutoCompleteTextView(this).apply {
+                hint = "Buyer / assigned to"
+                threshold = 1
+                setAdapter(ArrayAdapter(this@DashboardActivity, android.R.layout.simple_dropdown_item_1line, names))
+            }
         }
 
         val priceInput = EditText(this).apply {
@@ -449,7 +465,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         }
 
         container.addView(itemNameInput)
-        container.addView(assignedToInput)
+        container.addView(assignedToInputView)
         container.addView(priceInput)
 
         AlertDialog.Builder(this)
@@ -458,12 +474,24 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             .setView(container)
             .setPositiveButton("Save") { _, _ ->
                 val itemName = itemNameInput.text.toString().trim()
-                val assignedTo = assignedToInput.text.toString().trim()
+                val assignedTo = when (assignedToInputView) {
+                    is EditText -> assignedToInputView.text.toString().trim()
+                    is AutoCompleteTextView -> assignedToInputView.text.toString().trim()
+                    else -> ""
+                }
                 val priceValue = priceInput.text.toString().trim()
 
                 if (itemName.isEmpty() || assignedTo.isEmpty() || priceValue.isEmpty()) {
                     showMessage("Please fill in item name, buyer, and price.")
                     return@setPositiveButton
+                }
+
+                if (user.mode != "Solo") {
+                    val validNames = housematesAdapter.getAllItems().map { (it as com.shaz.shazcart.data.Housemate).name }
+                    if (!validNames.contains(assignedTo)) {
+                        showMessage("Please select a buyer from the housemate list.")
+                        return@setPositiveButton
+                    }
                 }
 
                 val normalizedPrice = if (priceValue.startsWith("₱")) priceValue else "₱$priceValue"

@@ -23,6 +23,8 @@ class DashboardRecyclerAdapter<T>(
         notifyDataSetChanged()
     }
 
+    fun getAllItems(): List<T> = itemList.toList()
+
     fun getItem(position: Int): T? {
         return itemList.getOrNull(position)
     }
