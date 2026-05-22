@@ -448,7 +448,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                     return@setPositiveButton
                 }
 
-                if (!housemateNames.contains(paidBy)) {
+                if (paidBy != "Unassigned" && !housemateNames.contains(paidBy)) {
                     showMessage("Please choose a valid housemate.")
                     return@setPositiveButton
                 }
