@@ -3,111 +3,374 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dashboard_bg">
+    android:background="@color/dashboard_bg"
+    android:fillViewport="true"
+    android:clipToPadding="false">
 
     <LinearLayout
         android:id="@+id/layoutWelcomePage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingTop="20dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:paddingBottom="32dp">
 
         <!-- Header -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="4dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="0dp"
             app:strokeWidth="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/bg_gradient_green"
-                android:padding="20dp"
+                android:background="@drawable/bg_gradient_hero"
+                android:padding="22dp"
                 android:gravity="center_horizontal">
 
-                <ImageView
-                    android:id="@+id/imageviewLogo"
-                    android:layout_width="96dp"
-                    android:layout_height="96dp"
-                    android:src="@drawable/shazcartgreenlogo2"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/bg_circle_white"
-                    android:contentDescription="ShazCart Logo" />
-
-                <TextView
-                    android:id="@+id/textviewTagline"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Smart Grocery Coordination"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_circle_white"
+                    android:paddingStart="14dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="14dp"
+                    android:paddingBottom="10dp">
+
+                    <ImageView
+                        android:id="@+id/imageviewLogo"
+                        android:layout_width="54dp"
+                        android:layout_height="54dp"
+                        android:src="@drawable/shazcartgreenlogo2"
+                        android:scaleType="centerCrop"
+                        android:contentDescription="ShazCart Logo" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+
+                        <TextView
+                            android:id="@+id/textviewTagline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ShazCart"
+                            android:textColor="@android:color/white"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textviewSubTagline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Smart grocery coordination for shared homes"
+                            android:textColor="#D1FAE5"
+                            android:textSize="13sp"
+                            android:layout_marginTop="2dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Plan. Share. Split."
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="12dp" />
+                    android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textviewSubTagline"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="For boarding houses, dorms, roommates"
-                    android:textColor="#BBF7D0"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="Keep every grocery list, budget, and reminder in one clean place."
+                    android:textColor="#E0F2FE"
                     android:textSize="14sp"
-                    android:layout_marginTop="6dp" />
+                    android:lineSpacingExtra="2dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="18dp"
+                    android:gravity="center">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        app:cardCornerRadius="18dp"
+                        app:cardBackgroundColor="#1AFFFFFF"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="12dp"
+                            android:text="Lists"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        app:cardCornerRadius="18dp"
+                        app:cardBackgroundColor="#1AFFFFFF"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="12dp"
+                            android:text="Split"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        app:cardCornerRadius="18dp"
+                        app:cardBackgroundColor="#1AFFFFFF"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="12dp"
+                            android:text="Remind"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Features -->
-        <LinearLayout
-            android:id="@+id/layoutFeatures"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp"
-            android:gravity="center_horizontal">
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/dashboard_surface"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/dashboard_border">
 
-            <TextView
-                android:id="@+id/textviewFeatureGroupMode"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="👥 Group Mode — Share lists, split costs"
-                android:textColor="#374151"
-                android:textSize="14sp"
-                android:layout_marginBottom="12dp"/>
+                android:orientation="vertical"
+                android:padding="20dp">
 
-            <TextView
-                android:id="@+id/textviewFeatureBudget"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="💰 Budget Tracker — Monitor your spending"
-                android:textColor="#374151"
-                android:textSize="14sp"
-                android:layout_marginBottom="12dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Why people use it"
+                    android:textColor="@color/dashboard_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/textviewFeatureReminders"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="⏰ Reminders — Never forget essentials"
-                android:textColor="#374151"
-                android:textSize="14sp"/>
-        </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="14dp">
 
-        <!-- Hero block -->
-        <TextView
-            android:id="@+id/textviewHeroPlaceholder"
+                    <TextView
+                        android:id="@+id/textviewFeatureGroupMode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• Group Mode lets everyone share lists and split costs cleanly"
+                        android:textColor="@color/dashboard_text"
+                        android:textSize="14sp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <TextView
+                        android:id="@+id/textviewFeatureBudget"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• Budget tracking keeps spending visible at a glance"
+                        android:textColor="@color/dashboard_text"
+                        android:textSize="14sp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <TextView
+                        android:id="@+id/textviewFeatureReminders"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• Reminders help you stay stocked on essentials"
+                        android:textColor="@color/dashboard_text"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Hero preview -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:gravity="center"
-            android:text="(Image Placeholder)"
-            android:textColor="#9CA3AF"
-            android:textSize="16sp"
-            android:background="#F3F4F6"
-            android:layout_margin="16dp"
-            android:padding="12dp"/>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/dashboard_surface"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/dashboard_border">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Your shared home, organized"
+                    android:textColor="@color/dashboard_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_card"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Today"
+                            android:textColor="@color/dashboard_text_muted"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="3 items left"
+                            android:textColor="@color/dashboard_text"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Fresh, focused, and ready before the next shop run."
+                            android:textColor="@color/dashboard_text_muted"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="88dp"
+                        android:layout_height="88dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_gradient_hero">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="72%"
+                            android:textColor="@android:color/white"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ready"
+                            android:textColor="#E0F2FE"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="14dp">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        app:cardCornerRadius="18dp"
+                        app:cardBackgroundColor="@color/dashboard_surface_alt"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="12dp"
+                            android:text="Shared list"
+                            android:textColor="@color/dashboard_primary"
+                            android:textStyle="bold" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        app:cardCornerRadius="18dp"
+                        app:cardBackgroundColor="@color/dashboard_surface_alt"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="12dp"
+                            android:text="Budget"
+                            android:textColor="@color/dashboard_primary"
+                            android:textStyle="bold" />
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Buttons -->
         <LinearLayout
@@ -116,7 +379,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_margin="24dp">
+            android:layout_marginBottom="8dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonGetStarted"
@@ -124,7 +387,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Create Account"
-                app:cornerRadius="12dp"
+                app:cornerRadius="16dp"
                 app:backgroundTint="@color/dashboard_accent"
                 android:textColor="@android:color/white"
                 android:layout_marginBottom="12dp" />
@@ -135,10 +398,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Sign In"
-                app:cornerRadius="12dp"
+                app:cornerRadius="16dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/dashboard_border"
-                android:backgroundTint="@android:color/transparent"
+                app:backgroundTint="@color/dashboard_surface"
                 android:textColor="@color/dashboard_primary" />
 
         </LinearLayout>
