@@ -75,10 +75,15 @@ class DashboardPresenter(
     private fun refreshView() {
         val (totalItems, pendingItems, totalSpent) = model.getSummary()
         view.showSummary(totalItems, pendingItems, totalSpent)
-        val (needsToPay, shouldReceive) = model.getSettlementSummary()
-        view.showSettlementSummary(needsToPay, shouldReceive)
-        val (payers, receivers) = model.getSettlementEntries()
-        view.showSettlementEntries(payers, receivers)
+        if (model.getMode() == "Group") {
+            val (needsToPay, shouldReceive) = model.getSettlementSummary()
+            view.showSettlementSummary(needsToPay, shouldReceive)
+            val (payers, receivers) = model.getSettlementEntries()
+            view.showSettlementEntries(payers, receivers)
+        } else {
+            view.showSettlementSummary("", "")
+            view.showSettlementEntries(emptyList(), emptyList())
+        }
         view.showHousematesStatus(model.getHousematesStatus().toList())
         view.showSharedList(model.getSharedList().toList())
 

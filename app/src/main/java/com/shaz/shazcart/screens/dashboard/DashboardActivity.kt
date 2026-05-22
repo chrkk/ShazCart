@@ -54,36 +54,37 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         val user = (application as CustomApp).getUser()
         val textviewGroupMode = findViewById<TextView>(R.id.textviewGroupMode)
         val buttonAddHousemate = findViewById<Button>(R.id.buttonAddHousemate)
+        val housematesTitle = findViewById<TextView>(R.id.textviewHousematesTitle)
+        val housematesDescription = findViewById<TextView>(R.id.textviewHousematesDescription)
+        val sharedListTitle = findViewById<TextView>(R.id.textviewSharedListTitle)
+        val sharedListDescription = findViewById<TextView>(R.id.textviewSharedListDescription)
+        val splitCard = findViewById<View>(R.id.cardSplitOverview)
+        val personalSummaryCard = findViewById<View>(R.id.personalSummaryCard)
 
         if (user.mode == "Solo") {
-            // Adjust the header text
             textviewGroupMode.text = "Solo Mode — Personal Dashboard"
-
-            // Hide housemates section completely
-            findViewById<TextView>(R.id.textviewHousematesTitle).visibility = View.GONE
+            housematesTitle.visibility = View.VISIBLE
+            housematesTitle.text = "Budget Limit"
+            housematesDescription.text = "Set your spending cap for personal mode."
             findViewById<RecyclerView>(R.id.recyclerviewHousemates).visibility = View.GONE
-
-            // Hide split overview and show personal summary
-            findViewById<View>(R.id.cardSplitOverview).visibility = View.GONE
-            findViewById<View>(R.id.personalSummaryCard).visibility = View.VISIBLE
-
-            // Repurpose the housemate button into a Budget Limit setter
+            splitCard.visibility = View.GONE
+            personalSummaryCard.visibility = View.VISIBLE
             buttonAddHousemate.text = "Set Budget Limit"
             buttonAddHousemate.setBackgroundColor(ContextCompat.getColor(this, R.color.dashboard_accent))
-
-            // Rename Shared Grocery List to Personal
-            findViewById<TextView>(R.id.textviewSharedListTitle).text = "Personal Grocery List"
+            sharedListTitle.text = "Personal Grocery List"
+            sharedListDescription.text = "Track what you buy for yourself and keep it tidy."
         } else {
-            // Restore Group UI when switching back from Solo
             textviewGroupMode.text = "Group Mode — Shared Boarding House"
-            findViewById<TextView>(R.id.textviewHousematesTitle).visibility = View.VISIBLE
+            housematesTitle.visibility = View.VISIBLE
+            housematesTitle.text = "Housemates"
+            housematesDescription.text = "Tap a housemate to manage payment status."
             findViewById<RecyclerView>(R.id.recyclerviewHousemates).visibility = View.VISIBLE
             buttonAddHousemate.text = "＋ Add Housemate"
             buttonAddHousemate.setBackgroundColor(ContextCompat.getColor(this, R.color.dashboard_success))
-            findViewById<TextView>(R.id.textviewSharedListTitle).text = "Shared Grocery List"
-            // Show split overview and hide personal summary
-            findViewById<View>(R.id.cardSplitOverview).visibility = View.VISIBLE
-            findViewById<View>(R.id.personalSummaryCard).visibility = View.GONE
+            sharedListTitle.text = "Shared Grocery List"
+            sharedListDescription.text = "Assign items and keep the shared list tidy."
+            splitCard.visibility = View.VISIBLE
+            personalSummaryCard.visibility = View.GONE
         }
     }
 
@@ -590,6 +591,9 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
     }
 
     override fun showSettlementSummary(needsToPay: String, shouldReceive: String) {
+        if ((application as CustomApp).getUser().mode == "Solo") {
+            return
+        }
         findViewById<TextView>(R.id.textviewNeedsToPay).text = needsToPay
         findViewById<TextView>(R.id.textviewShouldReceive).text = shouldReceive
     }
@@ -598,6 +602,11 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         payers: List<DashboardContract.SettlementEntry>,
         receivers: List<DashboardContract.SettlementEntry>
     ) {
+        if ((application as CustomApp).getUser().mode == "Solo") {
+            settlementPayers = emptyList()
+            settlementReceivers = emptyList()
+            return
+        }
         settlementPayers = payers
         settlementReceivers = receivers
 
