@@ -697,14 +697,14 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         }
         val user = (application as CustomApp).getUser()
         val housemateCount = housematesAdapter.getAllItems().size
-        val shareText = if (user.mode == "Group" && housemateCount > 0) {
+        val spentText = if (user.mode == "Group" && housemateCount > 0) {
             val shareAmount = totalSpent / housemateCount
-            " · Your share ₱${String.format("%.2f", shareAmount)}"
+            "₱${String.format("%.2f", shareAmount)} your share of ₱${String.format("%.2f", totalSpent)}"
         } else {
-            ""
+            "₱${String.format("%.2f", totalSpent)} spent"
         }
 
-        findViewById<TextView>(R.id.textviewTotalSpent).text = "₱${String.format("%.2f", totalSpent)} total$shareText"
+        findViewById<TextView>(R.id.textviewTotalSpent).text = spentText
         // If we're in Solo mode, update the personal summary card numbers
         if (user.mode == "Solo") {
             findViewById<TextView>(R.id.textviewBudgetLimit).text = "₱${String.format("%.2f", user.budgetLimit)}"
