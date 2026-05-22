@@ -420,7 +420,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         }
 
         val header = TextView(this).apply {
-            text = "Tap a name to open record, edit, settle, or clear actions."
+            text = "Tap a name to review, settle, or clear a payment."
             setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_text_muted))
         }
         container.addView(header)
@@ -592,7 +592,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             if (payers.isEmpty() && receivers.isEmpty()) {
                 "All settled"
             } else {
-                "Open split actions (${payers.size + receivers.size})"
+                "Review balances (${payers.size + receivers.size})"
             }
     }
 
