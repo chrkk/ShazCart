@@ -626,10 +626,11 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                 }
                 val priceValue = priceInput.text.toString().trim()
 
-                val normalizedAssignedTo = if (assignedTo.isBlank()) {
-                    if (user.mode == "Solo") user.displayName else "Unassigned"
-                } else {
-                    assignedTo
+                val normalizedAssignedTo = when {
+                    user.mode == "Solo" && assignedTo.isBlank() -> user.displayName
+                    assignedTo.isBlank() -> "Unassigned"
+                    assignedTo.equals("Unassigned", ignoreCase = true) -> "Unassigned"
+                    else -> assignedTo
                 }
 
                 if (itemName.isEmpty() || priceValue.isEmpty()) {
@@ -637,9 +638,8 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                     return@setPositiveButton
                 }
 
-                if (user.mode != "Solo") {
+                if (user.mode != "Solo" && normalizedAssignedTo != "Unassigned") {
                     val validNames = buildList {
-                        add("Unassigned")
                         addAll(housematesAdapter.getAllItems().map { (it as com.shaz.shazcart.data.Housemate).name })
                     }
                     if (!validNames.contains(normalizedAssignedTo)) {
