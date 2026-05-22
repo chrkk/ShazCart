@@ -216,6 +216,11 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         val amountInput = EditText(this).apply {
             hint = "Amount"
             inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+            if (user.mode == "Solo") {
+                showAddGroceryDialog()
+            } else {
+                showAddSharedExpenseDialog()
+            }
         }
 
         container.addView(fromInput)
@@ -230,6 +235,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                 val from = fromInput.text.toString().trim()
                 val to = toInput.text.toString().trim()
                 val amount = amountInput.text.toString().toDoubleOrNull() ?: 0.0
+            findViewById<Button>(R.id.buttonAddGrocery).text = "＋ Add Grocery Item"
 
                 if (from.isEmpty() || to.isEmpty() || amount <= 0.0) {
                     showMessage("Please provide payer, receiver, and amount.")
@@ -238,8 +244,9 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                 if (from == to) {
                     showMessage("Payer and receiver must be different.")
                     return@setPositiveButton
-                }
-
+            sharedListTitle.text = "Shared Expenses"
+            sharedListDescription.text = "Record groceries, bills, and split costs across housemates."
+            findViewById<Button>(R.id.buttonAddGrocery).text = "＋ Add Expense"
                 (presenter as DashboardContract.Presenter).recordSettlement(from, to, amount)
             }
             .setNegativeButton("Cancel", null)
@@ -331,6 +338,60 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         val settleButton = Button(this).apply {
             text = "Settle full balance"
+    private fun showAddSharedExpenseDialog() {
+        val user = (application as CustomApp).getUser()
+        val housemateNames = housematesAdapter.getAllItems().map { (it as Housemate).name }
+
+        val container = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(48, 24, 48, 0)
+        }
+
+        val expenseNameInput = EditText(this).apply {
+            hint = "Expense name"
+        }
+
+        val paidByInput = AutoCompleteTextView(this).apply {
+            hint = "Paid by"
+            threshold = 1
+            setAdapter(ArrayAdapter(this@DashboardActivity, android.R.layout.simple_dropdown_item_1line, housemateNames))
+            setText(user.displayName, false)
+        }
+
+        val amountInput = EditText(this).apply {
+            hint = "Total amount"
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        }
+
+        container.addView(expenseNameInput)
+        container.addView(paidByInput)
+        container.addView(amountInput)
+
+        AlertDialog.Builder(this)
+            .setTitle("Add Shared Expense")
+            .setMessage("The amount will be split equally among all housemates, including you.")
+            .setView(container)
+            .setPositiveButton("Save") { _, _ ->
+                val expenseName = expenseNameInput.text.toString().trim()
+                val paidBy = paidByInput.text.toString().trim()
+                val amountValue = amountInput.text.toString().trim()
+
+                if (expenseName.isEmpty() || paidBy.isEmpty() || amountValue.isEmpty()) {
+                    showMessage("Please fill in expense name, paid by, and amount.")
+                    return@setPositiveButton
+                }
+
+                if (!housemateNames.contains(paidBy)) {
+                    showMessage("Please choose a valid housemate.")
+                    return@setPositiveButton
+                }
+
+                val normalizedAmount = if (amountValue.startsWith("₱")) amountValue else "₱$amountValue"
+                presenter.addGroceryItem(expenseName, paidBy, normalizedAmount)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
             setTextColor(android.graphics.Color.WHITE)
             backgroundTintList = android.content.res.ColorStateList.valueOf(
                 ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_accent)
