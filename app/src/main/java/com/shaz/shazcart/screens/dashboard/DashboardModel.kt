@@ -54,6 +54,16 @@ class DashboardModel(private val app: CustomApp) {
         return Triple(totalItems, pendingItems, totalSpent)
     }
 
+    fun getDisplayedSpentTotal(): Double {
+        val (_, _, totalSpent) = getSummary()
+        val participantCount = housemates.size
+        return if (participantCount > 0) {
+            totalSpent / participantCount
+        } else {
+            totalSpent
+        }
+    }
+
     private fun updateExpenseSplit() {
         if (housemates.isEmpty()) return
 

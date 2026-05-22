@@ -88,7 +88,8 @@ class DashboardPresenter(
         }
 
         val (totalItems, pendingItems, totalSpent) = model.getSummary()
-        view.showSummary(totalItems, pendingItems, totalSpent)
+        val displayedSpent = model.getDisplayedSpentTotal()
+        view.showSummary(totalItems, pendingItems, displayedSpent)
         if (model.getMode() == "Group") {
             val (needsToPay, shouldReceive) = model.getSettlementSummary()
             view.showSettlementSummary(needsToPay, shouldReceive)
@@ -108,9 +109,9 @@ class DashboardPresenter(
         if (model.getMode() == "Solo") {
             val budget = model.getBudgetLimit()
             if (budget > 0) {
-                if (totalSpent > budget) {
+                if (displayedSpent > budget) {
                     view.showBudgetWarning("CRITICAL: You are over your budget of ₱$budget!", true)
-                } else if (totalSpent >= budget * 0.8) {
+                } else if (displayedSpent >= budget * 0.8) {
                     view.showBudgetWarning("Warning: You are close to your budget of ₱$budget.", false)
                 }
             }

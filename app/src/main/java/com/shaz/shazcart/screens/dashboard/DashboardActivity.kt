@@ -585,6 +585,45 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
     private fun showAddGroceryDialog() {
         val user = (application as CustomApp).getUser()
 
+        if (user.mode == "Solo") {
+            val container = android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                setPadding(48, 24, 48, 0)
+            }
+
+            val itemNameInput = EditText(this).apply {
+                hint = "Item name"
+            }
+
+            val priceInput = EditText(this).apply {
+                hint = "Price"
+                inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+            }
+
+            container.addView(itemNameInput)
+            container.addView(priceInput)
+
+            AlertDialog.Builder(this)
+                .setTitle("Add Personal Grocery")
+                .setMessage("Enter your item details and save.")
+                .setView(container)
+                .setPositiveButton("Save") { _, _ ->
+                    val itemName = itemNameInput.text.toString().trim()
+                    val priceValue = priceInput.text.toString().trim()
+
+                    if (itemName.isEmpty() || priceValue.isEmpty()) {
+                        showMessage("Please fill in item name and price.")
+                        return@setPositiveButton
+                    }
+
+                    val normalizedPrice = if (priceValue.startsWith("₱")) priceValue else "₱$priceValue"
+                    presenter.addGroceryItem(itemName, user.displayName, normalizedPrice)
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+            return
+        }
+
         val container = android.widget.LinearLayout(this).apply {
             orientation = android.widget.LinearLayout.VERTICAL
             setPadding(48, 24, 48, 0)
@@ -594,23 +633,15 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             hint = "Item name"
         }
 
-        // Build assigned-to input: free text in Solo, autocomplete with unassigned in Group
-        val assignedToInputView: View = if (user.mode == "Solo") {
-            EditText(this).apply {
-                hint = "Buyer / assigned to"
-                setText(user.displayName)
-            }
-        } else {
+        val assignedToInputView = AutoCompleteTextView(this).apply {
+            hint = "Buyer / assigned to"
+            threshold = 1
             val names = buildList {
                 add("Unassigned")
-                addAll(housematesAdapter.getAllItems().map { (it as com.shaz.shazcart.data.Housemate).name })
+                addAll(housematesAdapter.getAllItems().map { (it as Housemate).name })
             }.distinct()
-            AutoCompleteTextView(this).apply {
-                hint = "Buyer / assigned to"
-                threshold = 1
-                setAdapter(ArrayAdapter(this@DashboardActivity, android.R.layout.simple_dropdown_item_1line, names))
-                setText("Unassigned", false)
-            }
+            setAdapter(ArrayAdapter(this@DashboardActivity, android.R.layout.simple_dropdown_item_1line, names))
+            setText("Unassigned", false)
         }
 
         val priceInput = EditText(this).apply {
@@ -624,45 +655,29 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         AlertDialog.Builder(this)
             .setTitle("Add Grocery Item")
-            .setMessage(if (user.mode == "Solo") {
-                "Enter your item details and save."
-            } else {
-                "Assign a housemate now or leave it unassigned for later."
-            })
+            .setMessage("Assign a housemate now or leave it unassigned for later.")
             .setView(container)
             .setPositiveButton("Save") { _, _ ->
                 val itemName = itemNameInput.text.toString().trim()
-                val assignedTo = when (assignedToInputView) {
-                    is EditText -> assignedToInputView.text.toString().trim()
-                    is AutoCompleteTextView -> assignedToInputView.text.toString().trim()
-                    else -> ""
-                }
+                val assignedTo = assignedToInputView.text.toString().trim().ifBlank { "Unassigned" }
                 val priceValue = priceInput.text.toString().trim()
-
-                val normalizedAssignedTo = when {
-                    user.mode == "Solo" && assignedTo.isBlank() -> user.displayName
-                    assignedTo.isBlank() -> "Unassigned"
-                    assignedTo.equals("Unassigned", ignoreCase = true) -> "Unassigned"
-                    else -> assignedTo
-                }
 
                 if (itemName.isEmpty() || priceValue.isEmpty()) {
                     showMessage("Please fill in item name and price.")
                     return@setPositiveButton
                 }
 
-                if (user.mode != "Solo" && normalizedAssignedTo != "Unassigned") {
-                    val validNames = buildList {
-                        addAll(housematesAdapter.getAllItems().map { (it as com.shaz.shazcart.data.Housemate).name })
-                    }
-                    if (!validNames.contains(normalizedAssignedTo)) {
-                        showMessage("Please choose a housemate or Unassigned.")
-                        return@setPositiveButton
-                    }
+                val validNames = buildList {
+                    add("Unassigned")
+                    addAll(housematesAdapter.getAllItems().map { (it as Housemate).name })
+                }
+                if (!validNames.contains(assignedTo)) {
+                    showMessage("Please choose a housemate or Unassigned.")
+                    return@setPositiveButton
                 }
 
                 val normalizedPrice = if (priceValue.startsWith("₱")) priceValue else "₱$priceValue"
-                presenter.addGroceryItem(itemName, normalizedAssignedTo, normalizedPrice)
+                presenter.addGroceryItem(itemName, assignedTo, normalizedPrice)
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -696,15 +711,8 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             "Fully assigned"
         }
         val user = (application as CustomApp).getUser()
-        val housemateCount = housematesAdapter.getAllItems().size
-        val spentText = if (user.mode == "Group" && housemateCount > 0) {
-            val shareAmount = totalSpent / housemateCount
-            "₱${String.format("%.2f", shareAmount)} your share of ₱${String.format("%.2f", totalSpent)}"
-        } else {
-            "₱${String.format("%.2f", totalSpent)} spent"
-        }
-
-        findViewById<TextView>(R.id.textviewTotalSpent).text = spentText
+        findViewById<TextView>(R.id.textviewTotalSpent).text =
+            "₱${String.format("%.2f", totalSpent)} your share"
         // If we're in Solo mode, update the personal summary card numbers
         if (user.mode == "Solo") {
             findViewById<TextView>(R.id.textviewBudgetLimit).text = "₱${String.format("%.2f", user.budgetLimit)}"
