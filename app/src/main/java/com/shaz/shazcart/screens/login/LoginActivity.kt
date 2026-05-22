@@ -22,6 +22,10 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
 
         presenter = LoginPresenter(this, LoginModel(application as CustomApp))
 
+        findViewById<Button>(R.id.buttonBack).setOnClickListener {
+            finish()
+        }
+
         findViewById<Button>(R.id.buttonSignIn).setOnClickListener {
             val email: String = getEditTextValue(R.id.edittextEmail)
             val password: String = getEditTextValue(R.id.edittextPassword)
