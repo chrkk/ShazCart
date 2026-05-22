@@ -16,6 +16,25 @@ class DashboardModel(private val app: CustomApp) {
         return price.replace("₱", "").replace(",", "").trim().toDoubleOrNull() ?: 0.0
     }
 
+    fun getCurrentUserName(): String {
+        return app.getUser().displayName
+    }
+
+    fun ensureCurrentUserIncluded() {
+        if (getMode() != "Group") {
+            return
+        }
+
+        val currentUserName = getCurrentUserName()
+        if (housemates.none { it.name == currentUserName }) {
+            housemates.add(0, Housemate(currentUserName))
+        }
+    }
+
+    fun isCurrentUserHousemate(name: String): Boolean {
+        return name == getCurrentUserName()
+    }
+
     fun getSummary(): Triple<Int, Int, Double> {
         val totalItems = groceryList.size
         val pendingItems = groceryList.count { it.assignedTo == "Unassigned" }

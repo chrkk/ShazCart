@@ -73,6 +73,10 @@ class DashboardPresenter(
     }
 
     private fun refreshView() {
+        if (model.getMode() == "Group") {
+            model.ensureCurrentUserIncluded()
+        }
+
         val (totalItems, pendingItems, totalSpent) = model.getSummary()
         view.showSummary(totalItems, pendingItems, totalSpent)
         if (model.getMode() == "Group") {

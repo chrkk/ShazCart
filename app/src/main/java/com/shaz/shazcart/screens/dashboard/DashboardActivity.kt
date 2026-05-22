@@ -96,7 +96,14 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         groceryRecyclerView.layoutManager = LinearLayoutManager(this)
 
         housematesAdapter = DashboardRecyclerAdapter(
-            getPrimary = { housemate -> housemate.name },
+            getPrimary = { housemate ->
+                val currentUser = (application as CustomApp).getUser()
+                if (currentUser.mode == "Group" && housemate.name == currentUser.displayName) {
+                    "You"
+                } else {
+                    housemate.name
+                }
+            },
             getSecondary = { housemate ->
                 if (housemate.settlementPaid > 0.0) {
                     "${housemate.status} · Paid ₱${String.format("%.2f", housemate.settlementPaid)}"
@@ -108,7 +115,13 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                 showHousemateActionsDialog(position)
             },
             onLongClick = { _, position ->
-                showRemoveHousemateDialog(position)
+                val housemate = housematesAdapter.getItem(position)
+                val currentUser = (application as CustomApp).getUser()
+                if (housemate != null && currentUser.mode == "Group" && housemate.name == currentUser.displayName) {
+                    showMessage("You are included automatically.")
+                } else {
+                    showRemoveHousemateDialog(position)
+                }
             }
         )
 
