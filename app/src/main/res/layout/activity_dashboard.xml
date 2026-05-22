@@ -298,6 +298,15 @@
                 </LinearLayout>
 
                 <Button
+                    android:id="@+id/buttonSettleAllBalances"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:backgroundTint="@color/dashboard_success"
+                    android:text="Settle all balances"
+                    android:textColor="@android:color/white"/>
+
+                <Button
                     android:id="@+id/buttonManageSplit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -400,6 +409,7 @@
                     android:textStyle="bold"/>
 
                 <TextView
+                    android:id="@+id/textviewHousematesDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -453,6 +463,7 @@
                     android:textStyle="bold"/>
 
                 <TextView
+                    android:id="@+id/textviewSharedListDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"

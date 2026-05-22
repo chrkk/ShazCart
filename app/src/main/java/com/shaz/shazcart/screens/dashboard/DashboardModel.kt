@@ -16,6 +16,33 @@ class DashboardModel(private val app: CustomApp) {
         return price.replace("₱", "").replace(",", "").trim().toDoubleOrNull() ?: 0.0
     }
 
+    fun getCurrentUserName(): String {
+        return app.getUser().displayName
+    }
+
+    fun ensureCurrentUserIncluded() {
+        if (getMode() != "Group") {
+            return
+        }
+
+        val currentUserName = getCurrentUserName()
+        if (housemates.none { it.name == currentUserName }) {
+            housemates.add(0, Housemate(currentUserName))
+        }
+    }
+
+    fun isCurrentUserHousemate(name: String): Boolean {
+        return name == getCurrentUserName()
+    }
+
+    private fun labelHousemate(name: String): String {
+        return if (getMode() == "Group" && name == getCurrentUserName()) {
+            "You"
+        } else {
+            name
+        }
+    }
+
     fun getSummary(): Triple<Int, Int, Double> {
         val totalItems = groceryList.size
         val pendingItems = groceryList.count { it.assignedTo == "Unassigned" }
@@ -25,6 +52,16 @@ class DashboardModel(private val app: CustomApp) {
             totalSpent += parsePrice(item.price)
         }
         return Triple(totalItems, pendingItems, totalSpent)
+    }
+
+    fun getDisplayedSpentTotal(): Double {
+        val (_, _, totalSpent) = getSummary()
+        val participantCount = housemates.size
+        return if (participantCount > 0) {
+            totalSpent / participantCount
+        } else {
+            totalSpent
+        }
     }
 
     private fun updateExpenseSplit() {
@@ -45,25 +82,10 @@ class DashboardModel(private val app: CustomApp) {
             paidAmounts[item.assignedTo] = currentPaid + price
         }
 
-        // 2. Also account for recorded settlements (transfers between housemates)
-        val outAmounts = mutableMapOf<String, Double>()
-        val inAmounts = mutableMapOf<String, Double>()
-        for (h in housemates) {
-            outAmounts[h.name] = 0.0
-            inAmounts[h.name] = 0.0
-        }
-        for (s in settlements) {
-            outAmounts[s.from] = (outAmounts[s.from] ?: 0.0) + s.amount
-            inAmounts[s.to] = (inAmounts[s.to] ?: 0.0) + s.amount
-        }
-
-        // 3. Compare what they should pay (splitAmount) vs what they already paid or received and transfers
+        // 2. Compare what they should pay (splitAmount) vs what they already paid or received
         for (housemate in housemates) {
             val paid = paidAmounts[housemate.name] ?: 0.0
-            val out = outAmounts[housemate.name] ?: 0.0
-            val inAmt = inAmounts[housemate.name] ?: 0.0
-
-            val balance = splitAmount - paid - housemate.settlementPaid + housemate.settlementReceived - out + inAmt
+            val balance = splitAmount - paid - housemate.settlementPaid + housemate.settlementReceived
             housemate.netBalance = balance
 
             if (balance > 0.01) {
@@ -81,6 +103,15 @@ class DashboardModel(private val app: CustomApp) {
 
     fun addSettlement(from: String, to: String, amount: Double) {
         settlements.add(Settlement(from, to, amount))
+
+        housemates.find { it.name == from }?.let { housemate ->
+            housemate.settlementPaid += amount
+        }
+        housemates.find { it.name == to }?.let { housemate ->
+            housemate.settlementReceived += amount
+        }
+
+        updateExpenseSplit()
     }
 
     fun getSettlements(): List<Settlement> = settlements
@@ -109,7 +140,7 @@ class DashboardModel(private val app: CustomApp) {
             "Everyone is settled."
         } else {
             payers.joinToString("\n") { housemate ->
-                "• ${housemate.name} · ₱${String.format("%.2f", housemate.netBalance)}"
+                "• ${labelHousemate(housemate.name)} · ₱${String.format("%.2f", housemate.netBalance)}"
             }
         }
 
@@ -117,7 +148,7 @@ class DashboardModel(private val app: CustomApp) {
             "Nobody is owed money."
         } else {
             receivers.joinToString("\n") { housemate ->
-                "• ${housemate.name} · ₱${String.format("%.2f", kotlin.math.abs(housemate.netBalance))}"
+                "• ${labelHousemate(housemate.name)} · ₱${String.format("%.2f", kotlin.math.abs(housemate.netBalance))}"
             }
         }
 
@@ -129,7 +160,7 @@ class DashboardModel(private val app: CustomApp) {
 
         val payers = housemates.mapIndexedNotNull { index, housemate ->
             if (housemate.netBalance > 0.01) {
-                DashboardContract.SettlementEntry(housemate.name, housemate.netBalance, true, index)
+                DashboardContract.SettlementEntry(labelHousemate(housemate.name), housemate.netBalance, true, index)
             } else {
                 null
             }
@@ -137,7 +168,7 @@ class DashboardModel(private val app: CustomApp) {
 
         val receivers = housemates.mapIndexedNotNull { index, housemate ->
             if (housemate.netBalance < -0.01) {
-                DashboardContract.SettlementEntry(housemate.name, kotlin.math.abs(housemate.netBalance), false, index)
+                DashboardContract.SettlementEntry(labelHousemate(housemate.name), kotlin.math.abs(housemate.netBalance), false, index)
             } else {
                 null
             }
@@ -176,6 +207,20 @@ class DashboardModel(private val app: CustomApp) {
         }
         updateExpenseSplit()
         return housemate
+    }
+
+    fun settleAllHousemates(): Int {
+        updateExpenseSplit()
+
+        var settledCount = 0
+        housemates.indices.forEach { index ->
+            if (kotlin.math.abs(housemates[index].netBalance) > 0.01) {
+                settleHousemate(index)
+                settledCount++
+            }
+        }
+
+        return settledCount
     }
 
     fun clearHousematePayment(position: Int): Housemate {

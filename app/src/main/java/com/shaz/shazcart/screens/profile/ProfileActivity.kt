@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.shaz.shazcart.utils.toast
+import com.shaz.shazcart.utils.showModeSwitchDialog
 import com.shaz.shazcart.R
 import com.shaz.shazcart.app.CustomApp
 import com.shaz.shazcart.data.User
@@ -27,7 +28,12 @@ class ProfileActivity : AppCompatActivity(), ProfileContract.View {
         }
 
         findViewById<Button>(R.id.buttonSwitchMode).setOnClickListener {
-            showModeSwitchDialog()
+            val currentMode = (application as CustomApp).getUser().mode
+            showModeSwitchDialog(currentMode) { selected ->
+                (application as CustomApp).updateUserMode(selected)
+                presenter.loadProfileDetails()
+                toast("Mode switched to $selected")
+            }
         }
 
         presenter.loadProfileDetails()
@@ -50,37 +56,4 @@ class ProfileActivity : AppCompatActivity(), ProfileContract.View {
         findViewById<TextView>(R.id.textviewStatsFooter).text = summary.note
     }
 
-    private fun showModeSwitchDialog() {
-        val container = android.widget.LinearLayout(this).apply {
-            orientation = android.widget.LinearLayout.VERTICAL
-            setPadding(48, 24, 48, 0)
-        }
-
-        val radioGroup = RadioGroup(this).apply {
-            orientation = RadioGroup.HORIZONTAL
-        }
-
-        val radioGroupBtn = RadioButton(this).apply { text = "Group"; id = android.view.View.generateViewId() }
-        val radioSoloBtn = RadioButton(this).apply { text = "Solo"; id = android.view.View.generateViewId() }
-        radioGroup.addView(radioGroupBtn)
-        radioGroup.addView(radioSoloBtn)
-
-        val currentMode = (application as CustomApp).getUser().mode
-        if (currentMode == "Solo") radioSoloBtn.isChecked = true else radioGroupBtn.isChecked = true
-
-        container.addView(radioGroup)
-
-        AlertDialog.Builder(this)
-            .setTitle("Select mode")
-            .setMessage("Choose Solo for personal use or Group for shared house management.")
-            .setView(container)
-            .setPositiveButton("Apply") { _, _ ->
-                val selected = if (radioSoloBtn.isChecked) "Solo" else "Group"
-                (application as CustomApp).updateUserMode(selected)
-                presenter.loadProfileDetails()
-                toast("Mode switched to $selected")
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
 }
