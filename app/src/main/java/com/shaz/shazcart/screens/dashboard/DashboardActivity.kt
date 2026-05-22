@@ -20,6 +20,7 @@ import com.shaz.shazcart.data.GroceryItem
 import com.shaz.shazcart.data.Housemate
 import com.shaz.shazcart.helper.DashboardRecyclerAdapter
 import com.shaz.shazcart.screens.welcome.WelcomeActivity
+import com.shaz.shazcart.utils.showModeSwitchDialog
 
 class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
@@ -164,44 +165,14 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         }
 
         findViewById<Button>(R.id.buttonSwitchMode).setOnClickListener {
-            showModeSwitchDialog()
-        }
-    }
-
-    private fun showModeSwitchDialog() {
-        val container = android.widget.LinearLayout(this).apply {
-            orientation = android.widget.LinearLayout.VERTICAL
-            setPadding(48, 24, 48, 0)
-        }
-
-        val radioGroup = android.widget.RadioGroup(this).apply {
-            orientation = android.widget.RadioGroup.HORIZONTAL
-        }
-
-        val radioGroupBtn = android.widget.RadioButton(this).apply { text = "Group"; id = android.view.View.generateViewId() }
-        val radioSoloBtn = android.widget.RadioButton(this).apply { text = "Solo"; id = android.view.View.generateViewId() }
-        radioGroup.addView(radioGroupBtn)
-        radioGroup.addView(radioSoloBtn)
-
-        // Pre-select current mode
-        val currentMode = (application as CustomApp).getUser().mode
-        if (currentMode == "Solo") radioSoloBtn.isChecked = true else radioGroupBtn.isChecked = true
-
-        container.addView(radioGroup)
-
-        AlertDialog.Builder(this)
-            .setTitle("Select mode")
-            .setMessage("Choose Solo for personal use or Group for shared house management.")
-            .setView(container)
-            .setPositiveButton("Apply") { _, _ ->
-                val selected = if (radioSoloBtn.isChecked) "Solo" else "Group"
+            val currentMode = (application as CustomApp).getUser().mode
+            showModeSwitchDialog(currentMode) { selected ->
                 (application as CustomApp).updateUserMode(selected)
                 setupModeUI()
                 presenter.loadDashboard()
                 showMessage("Mode switched to $selected")
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+        }
     }
 
     private fun showRecordSettlementDialog() {
@@ -589,9 +560,13 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
     // --- DashboardContract.View implementations ---
 
     override fun showSummary(totalItems: Int, pendingItems: Int, totalSpent: Double) {
-        findViewById<TextView>(R.id.textviewTotalItems).text = "$totalItems Items"
-        findViewById<TextView>(R.id.textviewPendingItems).text = "$pendingItems Pending"
-        findViewById<TextView>(R.id.textviewTotalSpent).text = "₱$totalSpent Spent"
+        findViewById<TextView>(R.id.textviewTotalItems).text = "$totalItems items"
+        findViewById<TextView>(R.id.textviewPendingItems).text = if (pendingItems > 0) {
+            "$pendingItems unassigned"
+        } else {
+            "Fully assigned"
+        }
+        findViewById<TextView>(R.id.textviewTotalSpent).text = "₱${String.format("%.2f", totalSpent)} spent"
         // If we're in Solo mode, update the personal summary card numbers
         val user = (application as CustomApp).getUser()
         if (user.mode == "Solo") {
