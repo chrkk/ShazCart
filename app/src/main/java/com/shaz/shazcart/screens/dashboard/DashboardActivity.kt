@@ -277,6 +277,11 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                     showMessage("Please enter a housemate name.")
                     return@setPositiveButton
                 }
+                val currentUserName = (application as CustomApp).getUser().displayName
+                if (name == currentUserName) {
+                    showMessage("You are already included automatically.")
+                    return@setPositiveButton
+                }
                 presenter.addHousemate(name)
             }
             .setNegativeButton("Cancel", null)
@@ -353,6 +358,8 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             backgroundTintList = android.content.res.ColorStateList.valueOf(
                 ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_danger)
             )
+            val currentUser = (application as CustomApp).getUser()
+            visibility = if (currentUser.mode == "Group" && housemate.name == currentUser.displayName) View.GONE else View.VISIBLE
             setOnClickListener {
                 showRemoveHousemateDialog(position)
             }
@@ -365,7 +372,11 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         container.addView(deleteButton)
 
         AlertDialog.Builder(this)
-            .setTitle(housemate.name)
+            .setTitle(
+                if ((application as CustomApp).getUser().mode == "Group" &&
+                    housemate.name == (application as CustomApp).getUser().displayName
+                ) "You" else housemate.name
+            )
             .setView(container)
             .setPositiveButton("Close", null)
             .show()
