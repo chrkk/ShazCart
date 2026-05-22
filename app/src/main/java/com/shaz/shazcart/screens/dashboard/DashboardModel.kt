@@ -35,6 +35,14 @@ class DashboardModel(private val app: CustomApp) {
         return name == getCurrentUserName()
     }
 
+    private fun labelHousemate(name: String): String {
+        return if (getMode() == "Group" && name == getCurrentUserName()) {
+            "You"
+        } else {
+            name
+        }
+    }
+
     fun getSummary(): Triple<Int, Int, Double> {
         val totalItems = groceryList.size
         val pendingItems = groceryList.count { it.assignedTo == "Unassigned" }
@@ -122,7 +130,7 @@ class DashboardModel(private val app: CustomApp) {
             "Everyone is settled."
         } else {
             payers.joinToString("\n") { housemate ->
-                "• ${housemate.name} · ₱${String.format("%.2f", housemate.netBalance)}"
+                "• ${labelHousemate(housemate.name)} · ₱${String.format("%.2f", housemate.netBalance)}"
             }
         }
 
@@ -130,7 +138,7 @@ class DashboardModel(private val app: CustomApp) {
             "Nobody is owed money."
         } else {
             receivers.joinToString("\n") { housemate ->
-                "• ${housemate.name} · ₱${String.format("%.2f", kotlin.math.abs(housemate.netBalance))}"
+                "• ${labelHousemate(housemate.name)} · ₱${String.format("%.2f", kotlin.math.abs(housemate.netBalance))}"
             }
         }
 
@@ -142,7 +150,7 @@ class DashboardModel(private val app: CustomApp) {
 
         val payers = housemates.mapIndexedNotNull { index, housemate ->
             if (housemate.netBalance > 0.01) {
-                DashboardContract.SettlementEntry(housemate.name, housemate.netBalance, true, index)
+                DashboardContract.SettlementEntry(labelHousemate(housemate.name), housemate.netBalance, true, index)
             } else {
                 null
             }
@@ -150,7 +158,7 @@ class DashboardModel(private val app: CustomApp) {
 
         val receivers = housemates.mapIndexedNotNull { index, housemate ->
             if (housemate.netBalance < -0.01) {
-                DashboardContract.SettlementEntry(housemate.name, kotlin.math.abs(housemate.netBalance), false, index)
+                DashboardContract.SettlementEntry(labelHousemate(housemate.name), kotlin.math.abs(housemate.netBalance), false, index)
             } else {
                 null
             }
