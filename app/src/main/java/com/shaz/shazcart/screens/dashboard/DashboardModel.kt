@@ -199,6 +199,20 @@ class DashboardModel(private val app: CustomApp) {
         return housemate
     }
 
+    fun settleAllHousemates(): Int {
+        updateExpenseSplit()
+
+        var settledCount = 0
+        housemates.indices.forEach { index ->
+            if (kotlin.math.abs(housemates[index].netBalance) > 0.01) {
+                settleHousemate(index)
+                settledCount++
+            }
+        }
+
+        return settledCount
+    }
+
     fun clearHousematePayment(position: Int): Housemate {
         housemates[position].settlementPaid = 0.0
         housemates[position].settlementReceived = 0.0

@@ -42,6 +42,16 @@ class DashboardPresenter(
         refreshView()
     }
 
+    override fun settleAllBalances() {
+        val settledCount = model.settleAllHousemates()
+        if (settledCount == 0) {
+            view.showMessage("Everyone is already settled.")
+        } else {
+            view.showMessage("Settled all balances for $settledCount housemates.")
+        }
+        refreshView()
+    }
+
     override fun clearHousematePayment(position: Int) {
         val updated = model.clearHousematePayment(position)
         view.showMessage("${updated.name} payment cleared.")

@@ -201,6 +201,19 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             showSplitActionsDialog()
         }
 
+        findViewById<Button>(R.id.buttonSettleAllBalances).setOnClickListener {
+            if ((application as CustomApp).getUser().mode == "Group") {
+                AlertDialog.Builder(this)
+                    .setTitle("Settle all balances?")
+                    .setMessage("This will mark every current housemate balance as settled.")
+                    .setPositiveButton("Settle") { _, _ ->
+                        presenter.settleAllBalances()
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+            }
+        }
+
         findViewById<Button>(R.id.buttonSwitchMode).setOnClickListener {
             val currentMode = (application as CustomApp).getUser().mode
             showModeSwitchDialog(currentMode) { selected ->
