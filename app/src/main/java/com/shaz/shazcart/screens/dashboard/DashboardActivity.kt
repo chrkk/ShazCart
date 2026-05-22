@@ -422,7 +422,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             hint = "Paid by"
             threshold = 1
             setAdapter(ArrayAdapter(this@DashboardActivity, android.R.layout.simple_dropdown_item_1line, housemateNames))
-            setText(user.displayName, false)
+            setText("Unassigned", false)
         }
 
         val amountInput = EditText(this).apply {
