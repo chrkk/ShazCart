@@ -4,8 +4,8 @@
     android:id="@+id/layoutLoginPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/dashboard_bg">
+    android:background="@color/dashboard_bg"
+    android:orientation="horizontal">
 
     <!-- Header -->
     <RelativeLayout
@@ -25,23 +25,23 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:text="Back"
+            android:textColor="@color/dashboard_primary"
+            app:backgroundTint="@color/dashboard_surface"
             app:cornerRadius="14dp"
             app:icon="@android:drawable/ic_media_previous"
             app:iconGravity="textStart"
             app:iconPadding="8dp"
             app:iconTint="@color/dashboard_primary"
             app:strokeColor="@color/dashboard_surface"
-            app:strokeWidth="1dp"
-            app:backgroundTint="@color/dashboard_surface"
-            android:textColor="@color/dashboard_primary" />
+            app:strokeWidth="1dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/buttonBack"
             android:layout_marginTop="18dp"
-            android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/textviewWelcome"
@@ -50,14 +50,14 @@
                 android:text="ShazCart"
                 android:textColor="#FFFFFF"
                 android:textSize="28sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                app:cardCornerRadius="18dp"
                 app:cardBackgroundColor="@color/dashboard_surface"
+                app:cardCornerRadius="18dp"
                 app:cardElevation="0dp"
                 app:strokeWidth="0dp">
 
@@ -65,13 +65,13 @@
                     android:id="@+id/textviewSubtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sign in to your account"
-                    android:textColor="@color/dashboard_primary_dark"
-                    android:textSize="14sp"
                     android:paddingStart="14dp"
                     android:paddingTop="10dp"
                     android:paddingEnd="14dp"
-                    android:paddingBottom="10dp"/>
+                    android:paddingBottom="10dp"
+                    android:text="Sign in to your account"
+                    android:textColor="@color/dashboard_primary_dark"
+                    android:textSize="14sp" />
             </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
@@ -107,8 +107,8 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Password"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="12dp"
+                android:hint="Password">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edittextPassword"
@@ -131,22 +131,22 @@
                 android:id="@+id/radioGroupMode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="6dp">
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal">
 
                 <RadioButton
                     android:id="@+id/radioGroup"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="Group"
-                    android:checked="true" />
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="Group" />
 
                 <RadioButton
                     android:id="@+id/radioSolo"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Solo" />
 
             </RadioGroup>
@@ -157,19 +157,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:text="Sign In"
-                app:cornerRadius="12dp"
+                android:textColor="@android:color/white"
                 app:backgroundTint="@color/dashboard_accent"
-                android:textColor="@android:color/white" />
+                app:cornerRadius="12dp" />
 
             <TextView
                 android:id="@+id/textviewSignUp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
                 android:text="Don't have an account? Sign Up"
                 android:textColor="@color/dashboard_primary"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:layout_marginTop="12dp" />
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -179,11 +179,11 @@
         android:id="@+id/textviewDemoHint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-            android:text="💡 Choose Solo or Group before signing in"
-        android:textColor="#047857"
-        android:textSize="12sp"
-        android:gravity="center"
+        android:layout_margin="16dp"
         android:background="#ECFDF5"
+        android:gravity="center"
         android:padding="12dp"
-        android:layout_margin="16dp"/>
+        android:text="💡 Choose Solo or Group before signing in"
+        android:textColor="#047857"
+        android:textSize="12sp" />
 </LinearLayout>
