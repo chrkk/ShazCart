@@ -239,11 +239,6 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         val amountInput = EditText(this).apply {
             hint = "Amount"
             inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
-            if (user.mode == "Solo") {
-                showAddGroceryDialog()
-            } else {
-                showAddSharedExpenseDialog()
-            }
         }
 
         container.addView(fromInput)
@@ -258,7 +253,6 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                 val from = fromInput.text.toString().trim()
                 val to = toInput.text.toString().trim()
                 val amount = amountInput.text.toString().toDoubleOrNull() ?: 0.0
-            findViewById<Button>(R.id.buttonAddGrocery).text = "＋ Add Grocery Item"
 
                 if (from.isEmpty() || to.isEmpty() || amount <= 0.0) {
                     showMessage("Please provide payer, receiver, and amount.")
@@ -267,9 +261,8 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                 if (from == to) {
                     showMessage("Payer and receiver must be different.")
                     return@setPositiveButton
-            sharedListTitle.text = "Shared Expenses"
-            sharedListDescription.text = "Record groceries, bills, and split costs across housemates."
-            findViewById<Button>(R.id.buttonAddGrocery).text = "＋ Add Expense"
+                }
+
                 (presenter as DashboardContract.Presenter).recordSettlement(from, to, amount)
             }
             .setNegativeButton("Cancel", null)
