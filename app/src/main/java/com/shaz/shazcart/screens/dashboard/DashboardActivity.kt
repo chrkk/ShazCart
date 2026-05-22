@@ -361,6 +361,57 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         val settleButton = Button(this).apply {
             text = "Settle full balance"
+            setTextColor(android.graphics.Color.WHITE)
+            backgroundTintList = android.content.res.ColorStateList.valueOf(
+                ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_accent)
+            )
+            setOnClickListener {
+                presenter.settleHousemate(position)
+            }
+        }
+
+        val clearButton = Button(this).apply {
+            text = "Clear payment"
+            setTextColor(android.graphics.Color.WHITE)
+            backgroundTintList = android.content.res.ColorStateList.valueOf(
+                ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_text_muted)
+            )
+            visibility = if (housemate.settlementPaid > 0.0 || housemate.settlementReceived > 0.0) View.VISIBLE else View.GONE
+            setOnClickListener {
+                presenter.clearHousematePayment(position)
+            }
+        }
+
+        val deleteButton = Button(this).apply {
+            text = "Delete housemate"
+            setTextColor(android.graphics.Color.WHITE)
+            backgroundTintList = android.content.res.ColorStateList.valueOf(
+                ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_danger)
+            )
+            val currentUser = (application as CustomApp).getUser()
+            visibility = if (currentUser.mode == "Group" && housemate.name == currentUser.displayName) View.GONE else View.VISIBLE
+            setOnClickListener {
+                showRemoveHousemateDialog(position)
+            }
+        }
+
+        container.addView(statusText)
+        container.addView(editButton)
+        container.addView(settleButton)
+        container.addView(clearButton)
+        container.addView(deleteButton)
+
+        AlertDialog.Builder(this)
+            .setTitle(
+                if ((application as CustomApp).getUser().mode == "Group" &&
+                    housemate.name == (application as CustomApp).getUser().displayName
+                ) "You" else housemate.name
+            )
+            .setView(container)
+            .setPositiveButton("Close", null)
+            .show()
+    }
+
     private fun showAddSharedExpenseDialog() {
         val user = (application as CustomApp).getUser()
         val housemateNames = housematesAdapter.getAllItems().map { (it as Housemate).name }
@@ -413,56 +464,6 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                 presenter.addGroceryItem(expenseName, paidBy, normalizedAmount)
             }
             .setNegativeButton("Cancel", null)
-            .show()
-    }
-            setTextColor(android.graphics.Color.WHITE)
-            backgroundTintList = android.content.res.ColorStateList.valueOf(
-                ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_accent)
-            )
-            setOnClickListener {
-                presenter.settleHousemate(position)
-            }
-        }
-
-        val clearButton = Button(this).apply {
-            text = "Clear payment"
-            setTextColor(android.graphics.Color.WHITE)
-            backgroundTintList = android.content.res.ColorStateList.valueOf(
-                ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_text_muted)
-            )
-            visibility = if (housemate.settlementPaid > 0.0 || housemate.settlementReceived > 0.0) View.VISIBLE else View.GONE
-            setOnClickListener {
-                presenter.clearHousematePayment(position)
-            }
-        }
-
-        val deleteButton = Button(this).apply {
-            text = "Delete housemate"
-            setTextColor(android.graphics.Color.WHITE)
-            backgroundTintList = android.content.res.ColorStateList.valueOf(
-                ContextCompat.getColor(this@DashboardActivity, R.color.dashboard_danger)
-            )
-            val currentUser = (application as CustomApp).getUser()
-            visibility = if (currentUser.mode == "Group" && housemate.name == currentUser.displayName) View.GONE else View.VISIBLE
-            setOnClickListener {
-                showRemoveHousemateDialog(position)
-            }
-        }
-
-        container.addView(statusText)
-        container.addView(editButton)
-        container.addView(settleButton)
-        container.addView(clearButton)
-        container.addView(deleteButton)
-
-        AlertDialog.Builder(this)
-            .setTitle(
-                if ((application as CustomApp).getUser().mode == "Group" &&
-                    housemate.name == (application as CustomApp).getUser().displayName
-                ) "You" else housemate.name
-            )
-            .setView(container)
-            .setPositiveButton("Close", null)
             .show()
     }
 
