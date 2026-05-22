@@ -127,9 +127,29 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         groceryAdapter = DashboardRecyclerAdapter(
             getPrimary = { item -> item.itemName },
-            getSecondary = { item -> "${item.assignedTo} — ${item.price}" },
+            getSecondary = { item ->
+                val currentUser = (application as CustomApp).getUser()
+                val payerLabel = if (currentUser.mode == "Group" && item.assignedTo == currentUser.displayName) {
+                    "You"
+                } else {
+                    item.assignedTo
+                }
+
+                if (currentUser.mode == "Group") {
+                    "Paid by $payerLabel — ${item.price}"
+                } else {
+                    "$payerLabel — ${item.price}"
+                }
+            },
             onClick = { item, _ ->
-                Toast.makeText(this, "${item.itemName} bought by ${item.assignedTo} for ${item.price}", Toast.LENGTH_SHORT).show()
+                val currentUser = (application as CustomApp).getUser()
+                val payerLabel = if (currentUser.mode == "Group" && item.assignedTo == currentUser.displayName) {
+                    "You"
+                } else {
+                    item.assignedTo
+                }
+                val actionLabel = if (currentUser.mode == "Group") "paid by" else "bought by"
+                Toast.makeText(this, "${item.itemName} $actionLabel $payerLabel for ${item.price}", Toast.LENGTH_SHORT).show()
             },
             onLongClick = { _, position ->
                 showRemoveGroceryDialog(position)
@@ -141,8 +161,6 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
     }
 
     private fun setupButtons() {
-        val user = (application as CustomApp).getUser()
-
         findViewById<Button>(R.id.buttonAddHousemate).setOnClickListener {
             val currentUser = (application as CustomApp).getUser()
             if (currentUser.mode == "Solo") {
@@ -153,7 +171,12 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         }
 
         findViewById<Button>(R.id.buttonAddGrocery).setOnClickListener {
-            showAddGroceryDialog()
+            val currentUser = (application as CustomApp).getUser()
+            if (currentUser.mode == "Solo") {
+                showAddGroceryDialog()
+            } else {
+                showAddSharedExpenseDialog()
+            }
         }
 
         findViewById<Button>(R.id.buttonLogout)?.setOnClickListener {
