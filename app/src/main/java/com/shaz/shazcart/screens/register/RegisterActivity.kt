@@ -17,6 +17,10 @@ class RegisterActivity : AppCompatActivity(), RegisterContract.View {
 
         presenter = RegisterPresenter(this, RegisterModel(application as CustomApp))
 
+        findViewById<Button>(R.id.buttonBack).setOnClickListener {
+            finish()
+        }
+
         val nameField = findViewById<EditText>(R.id.edittextName)
         val emailField = findViewById<EditText>(R.id.edittextEmail)
         val passwordField = findViewById<EditText>(R.id.edittextPassword)

@@ -33,10 +33,6 @@ class WelcomeActivity : AppCompatActivity(), WelcomeContract.View {
         // Wire up presenter with view (this) and model — matches MVP pattern in Login/Register/Dashboard
         presenter = WelcomePresenter(this, WelcomeModel())
 
-        findViewById<Button>(R.id.buttonBack).setOnClickListener {
-            finish()
-        }
-
         // Delegate button clicks to presenter — mirrors onGetStartedClicked/onLoginClicked in contract
         findViewById<Button>(R.id.buttonGetStarted).setOnClickListener {
             presenter.onGetStartedClicked()

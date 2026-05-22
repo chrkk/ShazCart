@@ -34,23 +34,6 @@
                 android:padding="22dp"
                 android:gravity="center_horizontal">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonBack"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:text="Back"
-                    app:cornerRadius="14dp"
-                    app:icon="@android:drawable/ic_media_previous"
-                    app:iconGravity="textStart"
-                    app:iconPadding="8dp"
-                    app:iconTint="@color/dashboard_primary"
-                    app:strokeColor="@color/dashboard_surface"
-                    app:strokeWidth="1dp"
-                    app:backgroundTint="@color/dashboard_surface"
-                    android:textColor="@color/dashboard_primary" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
