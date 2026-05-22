@@ -478,22 +478,22 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             hint = "Item name"
         }
 
-        // Build assigned-to input: free text in Solo, autocomplete from housemates in Group
+        // Build assigned-to input: free text in Solo, autocomplete with unassigned in Group
         val assignedToInputView: View = if (user.mode == "Solo") {
             EditText(this).apply {
                 hint = "Buyer / assigned to"
                 setText(user.displayName)
             }
         } else {
-            val names = housematesAdapter.getAllItems().map { (it as com.shaz.shazcart.data.Housemate).name }
-            if (names.isEmpty()) {
-                showMessage("No housemates yet. Add a housemate first.")
-                return
-            }
+            val names = buildList {
+                add("Unassigned")
+                addAll(housematesAdapter.getAllItems().map { (it as com.shaz.shazcart.data.Housemate).name })
+            }.distinct()
             AutoCompleteTextView(this).apply {
                 hint = "Buyer / assigned to"
                 threshold = 1
                 setAdapter(ArrayAdapter(this@DashboardActivity, android.R.layout.simple_dropdown_item_1line, names))
+                setText("Unassigned", false)
             }
         }
 
@@ -508,7 +508,11 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         AlertDialog.Builder(this)
             .setTitle("Add Grocery Item")
-            .setMessage("Assign a buyer before saving the item.")
+            .setMessage(if (user.mode == "Solo") {
+                "Enter your item details and save."
+            } else {
+                "Assign a housemate now or leave it unassigned for later."
+            })
             .setView(container)
             .setPositiveButton("Save") { _, _ ->
                 val itemName = itemNameInput.text.toString().trim()
@@ -519,21 +523,30 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
                 }
                 val priceValue = priceInput.text.toString().trim()
 
-                if (itemName.isEmpty() || assignedTo.isEmpty() || priceValue.isEmpty()) {
-                    showMessage("Please fill in item name, buyer, and price.")
+                val normalizedAssignedTo = if (assignedTo.isBlank()) {
+                    if (user.mode == "Solo") user.displayName else "Unassigned"
+                } else {
+                    assignedTo
+                }
+
+                if (itemName.isEmpty() || priceValue.isEmpty()) {
+                    showMessage("Please fill in item name and price.")
                     return@setPositiveButton
                 }
 
                 if (user.mode != "Solo") {
-                    val validNames = housematesAdapter.getAllItems().map { (it as com.shaz.shazcart.data.Housemate).name }
-                    if (!validNames.contains(assignedTo)) {
-                        showMessage("Please select a buyer from the housemate list.")
+                    val validNames = buildList {
+                        add("Unassigned")
+                        addAll(housematesAdapter.getAllItems().map { (it as com.shaz.shazcart.data.Housemate).name })
+                    }
+                    if (!validNames.contains(normalizedAssignedTo)) {
+                        showMessage("Please choose a housemate or Unassigned.")
                         return@setPositiveButton
                     }
                 }
 
                 val normalizedPrice = if (priceValue.startsWith("₱")) priceValue else "₱$priceValue"
-                presenter.addGroceryItem(itemName, assignedTo, normalizedPrice)
+                presenter.addGroceryItem(itemName, normalizedAssignedTo, normalizedPrice)
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -562,7 +575,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
     override fun showSummary(totalItems: Int, pendingItems: Int, totalSpent: Double) {
         findViewById<TextView>(R.id.textviewTotalItems).text = "$totalItems items"
         findViewById<TextView>(R.id.textviewPendingItems).text = if (pendingItems > 0) {
-            "$pendingItems unassigned"
+            "$pendingItems awaiting assignment"
         } else {
             "Fully assigned"
         }
