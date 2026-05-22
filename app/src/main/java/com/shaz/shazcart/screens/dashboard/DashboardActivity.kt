@@ -695,9 +695,17 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         } else {
             "Fully assigned"
         }
-        findViewById<TextView>(R.id.textviewTotalSpent).text = "₱${String.format("%.2f", totalSpent)} spent"
-        // If we're in Solo mode, update the personal summary card numbers
         val user = (application as CustomApp).getUser()
+        val housemateCount = housematesAdapter.getAllItems().size
+        val shareText = if (user.mode == "Group" && housemateCount > 0) {
+            val shareAmount = totalSpent / housemateCount
+            " · Your share ₱${String.format("%.2f", shareAmount)}"
+        } else {
+            ""
+        }
+
+        findViewById<TextView>(R.id.textviewTotalSpent).text = "₱${String.format("%.2f", totalSpent)} total$shareText"
+        // If we're in Solo mode, update the personal summary card numbers
         if (user.mode == "Solo") {
             findViewById<TextView>(R.id.textviewBudgetLimit).text = "₱${String.format("%.2f", user.budgetLimit)}"
             val remaining = user.budgetLimit - totalSpent
